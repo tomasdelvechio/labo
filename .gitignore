@@ -181,3 +181,8 @@ project/target
 .scala_dependencies
 .worksheet
 
+.Rproj.user
+
+.RData
+.Rhistory
+rpart.Rproj
