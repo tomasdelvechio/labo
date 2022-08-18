@@ -181,6 +181,8 @@ project/target
 .scala_dependencies
 .worksheet
 
+.vscode/settings.json
+
 .Rproj.user
 
 .RData
