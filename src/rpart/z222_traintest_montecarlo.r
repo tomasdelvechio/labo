@@ -66,7 +66,7 @@ ArbolEstimarGanancia  <- function( semilla, param_basicos )
 #------------------------------------------------------------------------------
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("/home/tomas/workspace/uba/DMEyF")   #Establezco el Working Directory
+setwd("/home/tomas/workspace/uba/dmeyf")   #Establezco el Working Directory
 #cargo los datos
 
 #cargo los datos
