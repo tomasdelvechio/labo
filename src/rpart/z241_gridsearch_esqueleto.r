@@ -104,16 +104,20 @@ cat( file=archivo_salida,
 
 #itero por los loops anidados para cada hiperparametro
 
+for (cp in c(-0.5, -0.1, -0.0099, -0.0990, 0.0000, 0.0099, 0.01, 0.1 ) )
+{
 for( vmax_depth  in  c( 4, 6, 8, 10, 12, 14 )  )
 {
 for( vmin_split  in  c( 1000, 800, 600, 400, 200, 100, 50, 20, 10 )  )
 {
+for ( min_bucket in c(1, as.integer(vmin_split / 2),as.integer(vmin_split / 3), as.integer(vmin_split / 4) )) 
+{
 
   #notar como se agrega
-  param_basicos  <- list( "cp"=         -0.5,       #complejidad minima
-                          "minsplit"=  vmin_split,  #minima cantidad de registros en un nodo para hacer el split
-                          "minbucket"=  5,          #minima cantidad de registros en una hoja
-                          "maxdepth"=  vmax_depth ) #profundidad máxima del arbol
+  param_basicos  <- list( "cp"=         cp,       #complejidad minima
+                          "minsplit"=   vmin_split,  #minima cantidad de registros en un nodo para hacer el split
+                          "minbucket"=  min_bucket,          #minima cantidad de registros en una hoja
+                          "maxdepth"=   vmax_depth ) #profundidad máxima del arbol
 
   #Un solo llamado, con la semilla 17
   ganancia_promedio  <- ArbolesMontecarlo( ksemillas,  param_basicos )
@@ -122,9 +126,13 @@ for( vmin_split  in  c( 1000, 800, 600, 400, 200, 100, 50, 20, 10 )  )
   cat(  file=archivo_salida,
         append= TRUE,
         sep= "",
+        cp, "\t",
+        minsplit, "\t",
+        minbucket, "\t",
         vmax_depth, "\t",
-        vmin_split, "\t",
         ganancia_promedio, "\n"  )
 
+}
+}
 }
 }
