@@ -66,7 +66,7 @@ ArbolesMontecarlo  <- function( semillas,  param_basicos )
                           semillas,   #paso el vector de semillas, que debe ser el primer parametro de la funcion ArbolEstimarGanancia
                           MoreArgs= list( param_basicos),  #aqui paso el segundo parametro
                           SIMPLIFY= FALSE,
-                          mc.cores= 16 )  #se puede subir a 5 si posee Linux o Mac OS
+                          mc.cores= 10 )  #se puede subir a 5 si posee Linux o Mac OS
 
   #media de las ganancias
   return(  unlist(ganancias) )
@@ -75,11 +75,11 @@ ArbolesMontecarlo  <- function( semillas,  param_basicos )
 #------------------------------------------------------------------------------
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("~/buckets/b1/")   #Establezco el Working Directory
+setwd("/home/tomas/workspace/uba/dmeyf")   #Establezco el Working Directory
 #cargo los datos
 
 #cargo los datos
-dataset  <- fread("./datasetsOri/uba/competencia1_2022.csv")
+dataset  <- fread("./datasets/competencia1_2022.csv")
 
 #trabajo solo con los datos con clase, es decir 202101
 dataset  <- dataset[ clase_ternaria!= "" ]
