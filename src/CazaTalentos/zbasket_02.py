@@ -22,7 +22,7 @@ jugadores = np.append(mejor, peloton)
 vec_ftirar = np.vectorize(ftirar)
 
 #hago que los 100 jugadores tiren 10 veces cada uno
-vec_ftirar(jugadores, 10)
+#vec_ftirar(jugadores, 10)
 
 primero_ganador = 0
 
