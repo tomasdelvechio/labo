@@ -16,7 +16,7 @@ peloton = np.array(range(501, 600)) / 1000
 jugadores = np.append(mejor, peloton)
 
 #veo que tiene el vector
-jugadores
+#jugadores
 
 #vectorizo la funcion  ftirar
 vec_ftirar = np.vectorize(ftirar)

@@ -16,7 +16,7 @@ peloton    <- ( 501:599 ) / 1000
 jugadores  <- c( mejor, peloton )
 
 #veo que tiene el vector
-jugadores
+#jugadores
 
 
 

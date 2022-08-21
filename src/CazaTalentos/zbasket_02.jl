@@ -27,10 +27,11 @@ res = ftirar.( jugadores, 10 )
 primero_ganador = 0
 
 for i = 1:10000  #diez mil experimentos
+  global primero_ganador
   vaciertos = ftirar.(jugadores, 10)  #10 tiros libres cada jugador
-  mejor = findmax( vaciertos )
+  mejor_exp = findmax( vaciertos )
 
-  if mejor[2] == 1
+  if mejor_exp[2] == 1
       primero_ganador += 1
   end
 end
