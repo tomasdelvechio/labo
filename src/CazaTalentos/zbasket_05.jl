@@ -20,6 +20,7 @@ jugadores = fill( 0.7, 100 )
 suma_diferencias = 0
 
 for i = 1:10000
+  global suma_diferencias
   vaciertos = ftirar.(jugadores, 100)  #10 tiros libres cada jugador
   mejor = findmax( vaciertos )[2]
   aciertos_torneo = vaciertos[ mejor ] 
