@@ -22,11 +22,13 @@ require("lubridate")
 require("lhs")
 require("DiceKriging")
 require("mlrMBO")
+require("rgenoud")
 
 # Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+setwd("/home/tomas/workspace/uba/dmeyf")
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+#semillas <- c(17, 19, 23, 29, 31)
+semillas  <- c(697157, 585799, 906007, 748301, 372871 )
 
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")
@@ -155,6 +157,19 @@ modelo_rpart <- function(train, test, cp =  0, ms = 20, mb = 1, md = 10) {
     unlist(auc_t@y.values)
 }
 
+# Armamos una función para modelar con el fin de simplificar el código futuro
+modelo_rpart_ganancia <- function(train, test, cp =  0, ms = 20, mb = 1, md = 10) {
+  modelo <- rpart(clase_binaria ~ ., data = train,
+                  xval = 0,
+                  cp = cp,
+                  minsplit = ms,
+                  minbucket = mb,
+                  maxdepth = md)
+  
+  test_prediccion <- predict(modelo, test, type = "prob")
+  ganancia(test_prediccion[, "evento"], test$clase_binaria) / 0.3
+}
+
 # Función para tomar un muestra dejando todos los elementos de la clase BAJA+2
 tomar_muestra <- function(datos, resto = 10000) {
       t <- datos$clase_binaria == "evento"
@@ -172,7 +187,7 @@ table(dataset[ds_sample]$clase_binaria)
 ## - ¿Hay mejores formas de muestrear?
 ## - ¿Es bueno muestrear?
 ## - ¿Qué efectos en las métricas va a producir el muestreo?
-## - ¿Por qué se eligió usar el AUC?
+## - ¿Por qué se eligió usar el AUC? no se ve afectada por el desbalanceo de los datos.
 ## - ¿Qué hay que cambiar en la función de ganancia para poder utilizarla?
 
 ## ---------------------------
@@ -220,6 +235,23 @@ experimento_rpart <- function(ds, semillas, cp = 0, ms = 20, mb = 1, md = 10) {
   mean(auc)
 }
 
+# Una función auxiliar para los experimentos
+experimento_rpart_completo <- function(ds, semillas, cp = -1, ms = 20, mb = 1, md = 10) {
+  gan <- c()
+  for (s in semillas) {
+    set.seed(s)
+    in_training <- caret::createDataPartition(ds$clase_binaria, p = 0.70,
+                                              list = FALSE)
+    train  <-  ds[in_training, ]
+    test   <-  ds[-in_training, ]
+    #train_sample <- tomar_muestra(train)
+    r <- modelo_rpart_ganancia(train, test, 
+                      cp = cp, ms = ms, mb = mb, md = md)
+    gan <- c(gan, r)
+  }
+  mean(gan)
+}
+
 # Haremos 25 experimentos aleatorios, armamos las muestras de acuerdo a como
 # son las entradas de nuestro experimento.
 
@@ -259,7 +291,7 @@ ggplot(resultados_random_search, aes(x = md, y = ms, color = auc)) +
 ###
 
 ## ---------------------------
-## Step 8: Trabajando con herramientas más profesionales
+## Step 8: Trabajando con herramientas más profesionales - modelos bayesianos
 ## ---------------------------
 
 # Veamos un ejemplo
@@ -282,7 +314,7 @@ run <- exampleRun(obj_fun, design = design, learner = lrn,
                  control = ctrl, points.per.dim = 100, show.info = TRUE)
 
 # Ejecutar de a uno
-plotExampleRun(run, iters = 1, densregion = TRUE, pause = FALSE)
+plotExampleRun(run, iters = 1, densregion = TRUE, pause = FALSE) 
 plotExampleRun(run, iters = 2, densregion = TRUE, pause = FALSE)
 plotExampleRun(run, iters = 3, densregion = TRUE, pause = FALSE)
 plotExampleRun(run, iters = 5, densregion = TRUE, pause = FALSE)
@@ -369,6 +401,48 @@ obj_fun <- makeSingleObjectiveFunction(
 
 ctrl <- makeMBOControl()
 ctrl <- setMBOControlTermination(ctrl, iters = 16L)
+ctrl <- setMBOControlInfill(
+  ctrl,
+  crit = makeMBOInfillCritEI(),
+  opt = "focussearch",
+  # sacar parámetro opt.focussearch.points en próximas ejecuciones
+  opt.focussearch.points = 20
+)
+
+lrn <- makeMBOLearner(ctrl, obj_fun)
+
+surr_km <- makeLearner("regr.km", predict.type = "se", covtype = "matern3_2")
+
+run_md_ms <- mbo(obj_fun, learner = surr_km, control = ctrl, )
+print(run_md_ms)
+
+## ---------------------------
+## Step 11: Mas opt. Bayesiana para 3 parámetros
+## ---------------------------
+
+set.seed(semillas[1])
+obj_fun_md_ms_mb <- function(x) {
+  experimento_rpart_completo(dataset, semillas
+                    , md = x$maxdepth
+                    , ms = x$minsplit
+                    , mb = floor(x$minsplit*x$minbucket))
+}
+
+obj_fun <- makeSingleObjectiveFunction(
+  minimize = FALSE,
+  fn = obj_fun_md_ms_mb,
+  par.set = makeParamSet(
+    makeIntegerParam("maxdepth",  lower = 4L, upper = 20L),
+    makeIntegerParam("minsplit",  lower = 1L, upper = 200L),
+    makeNumericParam("minbucket",  lower = 0L, upper = 1L)
+    # makeNumericParam <- para parámetros continuos
+  ),
+  noisy = TRUE,
+  has.simple.signature = FALSE
+)
+
+ctrl <- makeMBOControl()
+ctrl <- setMBOControlTermination(ctrl, iters = 30L)
 ctrl <- setMBOControlInfill(
   ctrl,
   crit = makeMBOInfillCritEI(),
