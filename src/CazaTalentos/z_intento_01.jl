@@ -13,7 +13,11 @@ function ftirar(prob, qty)
   return  sum( rand() < prob for i in 1:qty )
 end
 
+veces_que_gano_michael = 0
+cantidad_tiros_totales = 0 # En cada vuelta dará lo mismo, solo lo necesitamos su valor al final
+
 for semilla in semillas
+    global veces_que_gano_michael, cantidad_tiros_totales
     Random.seed!(semilla)
 
     #defino los jugadores
@@ -21,8 +25,8 @@ for semilla in semillas
     peloton = Vector((501:599) / 1000)
     jugadores = append!(peloton, mejor) #intencionalmente el mejor esta al final
 
-    longitud_grupo = 20
-    tiros_libres = 20
+    longitud_grupo = 10
+    tiros_libres = 10
 
 
 
@@ -30,7 +34,7 @@ for semilla in semillas
 
     cantidad_tiros_totales = 0
 
-    for ronda in 1:10
+    for ronda in 1:20
         #global ganadores_rondas, cantidad_tiros_totales
         ganadores_grupo = Vector()
         grupos = collect(Iterators.partition(shuffle(jugadores), longitud_grupo))
@@ -48,13 +52,17 @@ for semilla in semillas
         ganadores_rondas = append!(ganadores_rondas, jugador_ganador_ronda)
     end
 
-    println(ganadores_rondas)
+    #println(ganadores_rondas)
 
-    ronda_final_aciertos = ftirar.(ganadores_rondas, 100)
-    cantidad_tiros_totales += length(ganadores_rondas) * 100
+    ronda_final_aciertos = ftirar.(ganadores_rondas, 60)
+    cantidad_tiros_totales += length(ganadores_rondas) * 60
     mejor_ronda_final = findmax( ronda_final_aciertos )[2]
     jugador_ganador_final = ganadores_rondas[mejor_ronda_final]
 
-    println(cantidad_tiros_totales)
-    println(jugador_ganador_final)
+    #println(cantidad_tiros_totales)
+    #println(jugador_ganador_final)
+    if (jugador_ganador_final == 0.7) veces_que_gano_michael += 1 end
 end
+
+println(cantidad_tiros_totales)
+println(veces_que_gano_michael / length(semillas))
