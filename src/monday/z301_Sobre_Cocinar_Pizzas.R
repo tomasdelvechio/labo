@@ -28,7 +28,7 @@ require("rgenoud")
 setwd("/home/tomas/workspace/uba/dmeyf")
 # Poner sus semillas
 #semillas <- c(17, 19, 23, 29, 31)
-semillas  <- c(697157, 585799, 906007, 748301, 372871 )
+semillas  <- c(697157, 585799, 906007, 748301, 372871)
 
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")
@@ -432,9 +432,10 @@ obj_fun <- makeSingleObjectiveFunction(
   minimize = FALSE,
   fn = obj_fun_md_ms_mb,
   par.set = makeParamSet(
-    makeIntegerParam("maxdepth",  lower = 4L, upper = 20L),
-    makeIntegerParam("minsplit",  lower = 1L, upper = 200L),
-    makeNumericParam("minbucket",  lower = 0L, upper = 1L)
+    makeIntegerParam("maxdepth",  lower = 2L, upper = 30L),
+    makeIntegerParam("minsplit",  lower = 1L, upper = 2000L),
+    makeNumericParam("minbucket",  lower = 0L, upper = 1L),
+    #makeNumericParam("cp",  lower = -1, upper = 1L)
     # makeNumericParam <- para parámetros continuos
   ),
   noisy = TRUE,
@@ -442,7 +443,7 @@ obj_fun <- makeSingleObjectiveFunction(
 )
 
 ctrl <- makeMBOControl()
-ctrl <- setMBOControlTermination(ctrl, iters = 30L)
+ctrl <- setMBOControlTermination(ctrl, iters = 60L)
 ctrl <- setMBOControlInfill(
   ctrl,
   crit = makeMBOInfillCritEI(),
@@ -457,6 +458,8 @@ surr_km <- makeLearner("regr.km", predict.type = "se", covtype = "matern3_2")
 
 run_md_ms <- mbo(obj_fun, learner = surr_km, control = ctrl, )
 print(run_md_ms)
+
+print("Final paso 11")
 
 ## TAREA:
 ## Agregue todos los parámetros que considere. Una vez que tenga sus mejores

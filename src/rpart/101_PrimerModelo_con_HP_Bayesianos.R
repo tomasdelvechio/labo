@@ -16,12 +16,43 @@ dtrain  <- dataset[ foto_mes==202101 ]  #defino donde voy a entrenar
 dapply  <- dataset[ foto_mes==202103 ]  #defino donde voy a aplicar el modelo
 
 #genero el modelo,  aqui se construye el arbol
+# opt bayesiana v1
+#modelo  <- rpart(formula=   "clase_ternaria ~ .",  #quiero predecir clase_ternaria a partir de el resto de las variables
+#                 data=   dtrain,  #los datos donde voy a entrenar
+#                 xval=        0,
+#                 cp=         -1,   #esto significa no limitar la complejidad de los splits
+#                 minsplit=  128,     #minima cantidad de registros para que se haga el split
+#                 minbucket=  19,     #tamaño minimo de una hoja
+#                 maxdepth=    5 )    #profundidad maxima del arbol
+
+#genero el modelo,  aqui se construye el arbol
+# opt bayesiana v2
+#modelo  <- rpart(formula=   "clase_ternaria ~ .",  #quiero predecir clase_ternaria a partir de el resto de las variables
+#                 data=   dtrain,  #los datos donde voy a entrenar
+#                 xval=        0,
+#                 cp=         -1,   #esto significa no limitar la complejidad de los splits
+#                 minsplit=  412,     #minima cantidad de registros para que se haga el split
+#                 minbucket= 269,     #tamaño minimo de una hoja
+#                 maxdepth=    5 )    #profundidad maxima del arbol
+
+#genero el modelo,  aqui se construye el arbol
+# opt bayesiana v3
+#modelo  <- rpart(formula=   "clase_ternaria ~ .",  #quiero predecir clase_ternaria a partir de el resto de las variables
+#                 data=   dtrain,  #los datos donde voy a entrenar
+#                 xval=        0,
+#                 cp=      0.217,   #esto significa no limitar la complejidad de los splits
+#                 minsplit= 1181,     #minima cantidad de registros para que se haga el split
+#                 minbucket= 492,     #tamaño minimo de una hoja
+#                 maxdepth=    5 )    #profundidad maxima del arbol
+
+#genero el modelo,  aqui se construye el arbol
+# opt bayesiana v3.1
 modelo  <- rpart(formula=   "clase_ternaria ~ .",  #quiero predecir clase_ternaria a partir de el resto de las variables
                  data=   dtrain,  #los datos donde voy a entrenar
                  xval=        0,
                  cp=         -1,   #esto significa no limitar la complejidad de los splits
-                 minsplit=  128,     #minima cantidad de registros para que se haga el split
-                 minbucket=  19,     #tamaño minimo de una hoja
+                 minsplit= 1181,     #minima cantidad de registros para que se haga el split
+                 minbucket= 492,     #tamaño minimo de una hoja
                  maxdepth=    5 )    #profundidad maxima del arbol
 
 
@@ -49,6 +80,6 @@ dir.create( "./exp/" )
 dir.create( "./exp/KA2001" )
 
 fwrite( dapply[ , list(numero_de_cliente, Predicted) ], #solo los campos para Kaggle
-        file= "./exp/KA2001/_K101_002.csv",
+        file= "./exp/KA2001/_K101_004_opt_bay_v3.csv",
         sep=  "," )
 
