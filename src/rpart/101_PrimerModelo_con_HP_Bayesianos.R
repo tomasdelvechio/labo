@@ -47,12 +47,22 @@ dapply  <- dataset[ foto_mes==202103 ]  #defino donde voy a aplicar el modelo
 
 #genero el modelo,  aqui se construye el arbol
 # opt bayesiana v3.1
+#modelo  <- rpart(formula=   "clase_ternaria ~ .",  #quiero predecir clase_ternaria a partir de el resto de las variables
+#                 data=   dtrain,  #los datos donde voy a entrenar
+#                 xval=        0,
+#                 cp=         -1,   #esto significa no limitar la complejidad de los splits
+#                 minsplit= 1181,     #minima cantidad de registros para que se haga el split
+#                 minbucket= 492,     #tamaño minimo de una hoja
+#                 maxdepth=    5 )    #profundidad maxima del arbol
+
+#genero el modelo,  aqui se construye el arbol
+# opt bayesiana v3.2
 modelo  <- rpart(formula=   "clase_ternaria ~ .",  #quiero predecir clase_ternaria a partir de el resto de las variables
                  data=   dtrain,  #los datos donde voy a entrenar
                  xval=        0,
                  cp=         -1,   #esto significa no limitar la complejidad de los splits
-                 minsplit= 1181,     #minima cantidad de registros para que se haga el split
-                 minbucket= 492,     #tamaño minimo de una hoja
+                 minsplit= 1221,     #minima cantidad de registros para que se haga el split
+                 minbucket= 274,     #tamaño minimo de una hoja
                  maxdepth=    5 )    #profundidad maxima del arbol
 
 

@@ -434,7 +434,7 @@ obj_fun <- makeSingleObjectiveFunction(
   par.set = makeParamSet(
     makeIntegerParam("maxdepth",  lower = 2L, upper = 30L),
     makeIntegerParam("minsplit",  lower = 1L, upper = 2000L),
-    makeNumericParam("minbucket",  lower = 0L, upper = 1L),
+    makeNumericParam("minbucket",  lower = 0L, upper = 1L)
     #makeNumericParam("cp",  lower = -1, upper = 1L)
     # makeNumericParam <- para parámetros continuos
   ),
@@ -443,7 +443,7 @@ obj_fun <- makeSingleObjectiveFunction(
 )
 
 ctrl <- makeMBOControl()
-ctrl <- setMBOControlTermination(ctrl, iters = 60L)
+ctrl <- setMBOControlTermination(ctrl, iters = 150L)
 ctrl <- setMBOControlInfill(
   ctrl,
   crit = makeMBOInfillCritEI(),
