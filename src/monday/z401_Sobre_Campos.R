@@ -19,9 +19,10 @@ require("ggplot2")
 require("dplyr")
 
 # Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+setwd("/home/tomas/workspace/uba/dmeyf")
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+#semillas <- c(17, 19, 23, 29, 31)
+semillas  <- c(697157, 585799, 906007, 748301, 372871)
 
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")
@@ -178,6 +179,16 @@ experimento <- function() {
             list = FALSE)
         train  <-  dataset[in_training, ]
         test   <-  dataset[-in_training, ]
+        
+        mean_Visa_fechaalta <- mean(dtrain$Visa_fechaalta, na.rm = T)
+        # Imputamos los nulos de nuestra variable con la media
+        dtrain[, Visa_fechaalta_3 := ifelse(is.na(Visa_fechaalta), 
+                                            mean_Visa_fechaalta,
+                                            Visa_fechaalta)] 
+        
+        dtest[, Visa_fechaalta_3 := ifelse(is.na(Visa_fechaalta), 
+                                           mean_Visa_fechaalta,
+                                           Visa_fechaalta)] 
 
         r <- rpart(clase_binaria ~ .,
                     data = train,
@@ -191,6 +202,8 @@ experimento <- function() {
     }
     mean(gan)
 }
+
+experimento()
 
 # Veamos la 
 ## Preguntas
@@ -369,8 +382,8 @@ print(modelo6$variable.importance)
 
 ##
 ## TAREA: Multiples experimentos. Un script por cada uno que debe incluir:
-## - Feature engineering correctamente aplicado
-## - Opt Bayesiana para el dataset que se incluya nuevas variables
+## - Feature engineering correctamente aplicado -> Compartirlo por Zulip
+## - Opt Bayesiana para el dataset que se incluya nuevas variables (Hasta 50 para arrancar)
 ## - Scorear en los datos de marzo y subir a kaggle el score.
 
 
