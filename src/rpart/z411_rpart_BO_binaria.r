@@ -1,4 +1,15 @@
+# Este script esta pensado para corren en Google Cloud
+# si se lo desea correr en Windows debera
+#  * cambiar el setwd()  y las rutas
+#  * cuando llame a la funcion mcmapply  poner  mc.cores=1
+#  * armarse de mucha paciencia porque va a demorar muchas horas en Windows
+
 #Optimizacion Bayesiana de hiperparametros de  rpart
+# Hace  1-Repeated  5-Fold Cross Validation
+
+
+# NO utiliza Feature Engineering  ( el Fiscal General se enoja ... )
+
 
 #limpio la memoria
 rm( list=ls() )  #remove all objects
@@ -14,19 +25,21 @@ require("parallel")
 require("DiceKriging")
 require("mlrMBO")
 
+#aqui deben ir SUS semillas, se usan para  1-Repeated  (5-Fold Cross Validation)
+ksemilla_azar  <- c(102191)
+
 
 #Defino la  Optimizacion Bayesiana
 
 kBO_iter  <- 100   #cantidad de iteraciones de la Optimizacion Bayesiana
 
 hs  <- makeParamSet(
-          makeNumericParam("cp"       , lower= -1   , upper=    0.1),
-          makeIntegerParam("minsplit" , lower=  1L  , upper= 8000L),  #la letra L al final significa ENTERO
-          makeIntegerParam("minbucket", lower=  1L  , upper= 4000L),
-          makeIntegerParam("maxdepth" , lower=  3L  , upper=   20L),
+          makeNumericParam("cp"       , lower=  -1.0, upper=    0.1),
+          makeNumericParam("minsplit" , lower=   1,   upper= 5000 ),
+          makeNumericParam("minbucket", lower=   1,   upper= 1000 ),
+          makeIntegerParam("maxdepth" , lower=   3L,  upper=   20L),  #la letra L al final significa ENTERO
           forbidden = quote( minbucket > 0.5*minsplit ) )             # minbuket NO PUEDE ser mayor que la mitad de minsplit
 
-ksemilla_azar  <- 102191   #cambiar por la primer semilla
 
 #------------------------------------------------------------------------------
 #graba a un archivo los componentes de lista
@@ -72,28 +85,44 @@ particionar  <- function( data, division, agrupa="", campo="fold", start=1, seed
 
 ArbolSimple  <- function( fold_test, data, param )
 {
+  param2 <- param
+  #param2$minsplit   <- as.integer( round( 2^param$minsplit ) )
+  #param2$minbucket  <- as.integer( round( 2^param$minbucket ) )
+  
   #genero el modelo
-  modelo  <- rpart("clase_ternaria ~ .", 
+  modelo  <- rpart("clase_binaria ~ .  -Visa_mpagado -mcomisiones_mantenimiento -clase_ternaria",
                    data= data[ fold != fold_test, ],  #entreno en todo MENOS el fold_test que uso para testing
                    xval= 0,
-                   control= param )
+                   control= param2 )
 
   #aplico el modelo a los datos de testing
   prediccion  <- predict( modelo, 
                           data[ fold==fold_test, ],  #aplico el modelo sobre los datos de testing
                           type= "prob")   #quiero que me devuelva probabilidades
 
-  prob_baja2  <- prediccion[, "BAJA+2"]  #esta es la probabilidad de baja
+  #En el 1er cuatrimestre del Tercer Año de la Maestria se explicaran las siguientes 12 lineas
+  dtest <- copy( data[ fold==fold_test , list( clase_ternaria )] )
+  dtest[ , pred := prediccion[ ,"SI"] ]
+  dtest[ , azar := runif( nrow( dtest ) ) ]
+  setorder(  dtest, -pred, azar )
+
+  dtest[ , gan :=  ifelse( clase_ternaria=="BAJA+2", 78000, -2000 ) ]
+  dtest[ , gan_acum := cumsum( gan ) ]
 
   #calculo la ganancia
-  ganancia_testing  <- data[ fold==fold_test ][ prob_baja2 > 1/40,  
-                                                sum( ifelse( clase_ternaria=="BAJA+2", 78000, -2000 ) )] 
+  dtest2   <- dtest[ (1:100)*100,  ]
+  idx_max  <- which.max( dtest2$gan_acum ) 
+  ganancia_testing  <- dtest2[ (idx_max-1):(idx_max+1),  mean(gan_acum) ]
+
+
+  rm( dtest )
+  rm( dtest2 )
 
   return( ganancia_testing )  #esta es la ganancia sobre el fold de testing, NO esta normalizada
 }
 #------------------------------------------------------------------------------
 
-ArbolesCrossValidation  <- function( data, param, qfolds, pagrupa, semilla )
+ArbolesCrossValidation  <- function( semilla, data, param, qfolds, pagrupa )
 {
   divi  <- rep( 1, qfolds )  # generalmente  c(1, 1, 1, 1, 1 )  cinco unos
 
@@ -103,14 +132,16 @@ ArbolesCrossValidation  <- function( data, param, qfolds, pagrupa, semilla )
                           seq(qfolds), # 1 2 3 4 5
                           MoreArgs= list( data, param), 
                           SIMPLIFY= FALSE,
-                          mc.cores= 1 )   #se puede subir a qfolds si posee Linux o Mac OS
+                          mc.cores= 5 )   #debe ir 1 si es Windows
 
   data[ , fold := NULL ]
 
   #devuelvo la primer ganancia y el promedio
   ganancia_promedio  <- mean( unlist( ganancias ) )   #promedio las ganancias
   ganancia_promedio_normalizada  <- ganancia_promedio * qfolds  #aqui normalizo la ganancia
-  
+
+  gc()
+
   return( ganancia_promedio_normalizada )
 }
 #------------------------------------------------------------------------------
@@ -122,39 +153,47 @@ EstimarGanancia  <- function( x )
    GLOBAL_iteracion  <<-  GLOBAL_iteracion + 1
 
    xval_folds  <- 5
-   ganancia  <- ArbolesCrossValidation( dataset,
-                                        param= x, #los hiperparametros del arbol
-                                        qfolds= xval_folds,  #la cantidad de folds
-                                        pagrupa= "clase_ternaria",
-                                        semilla= ksemilla_azar )
+   vganancias <- mcmapply( ArbolesCrossValidation,
+                           ksemilla_azar,
+                           MoreArgs= list ( dtrain, param=x, qfolds= xval_folds, pagrupa= "clase_ternaria" ),
+                           SIMPLIFY= FALSE,
+                           mc.cores = 5 )  #debe ir 1 si es Windows
 
+
+   ganancia_promedio  <- mean( unlist( vganancias ) )
    #logueo 
    xx  <- x
    xx$xval_folds  <-  xval_folds
-   xx$ganancia  <- ganancia
+   xx$ganancia  <- ganancia_promedio
    xx$iteracion <- GLOBAL_iteracion
    loguear( xx,  arch= archivo_log )
 
-   return( ganancia )
+   return( xx$ganancia )
 }
 #------------------------------------------------------------------------------
 #Aqui empieza el programa
 
-setwd( "D:\\gdrive\\UBA2022\\" )
+setwd( "~/buckets/b1/" )
 
-#cargo el dataset
+#cargo el dataset, aqui debe poner  SU RUTA
 dataset  <- fread("./datasets/competencia1_2022.csv")   #donde entreno
+
+#creo la clase_binaria  SI= {BAJA+1, BAJA+2}  NO={CONTINUA}
+dataset[ foto_mes==202101, clase_binaria :=  ifelse( clase_ternaria=="CONTINUA", "NO", "SI" ) ]
+
+#defino los datos donde entreno
+dtrain  <- dataset[ foto_mes==202101, ]
 
 
 #creo la carpeta donde va el experimento
 # HT  representa  Hiperparameter Tuning
 dir.create( "./exp/",  showWarnings = FALSE ) 
-dir.create( "./exp/HT3210/", showWarnings = FALSE )
-setwd("./exp/HT3210/")   #Establezco el Working Directory DEL EXPERIMENTO
+dir.create( "./exp/HT4110/", showWarnings = FALSE )
+setwd("./exp/HT4110/")   #Establezco el Working Directory DEL EXPERIMENTO
 
-
-archivo_log  <- "HT321.txt"
-archivo_BO   <- "HT321.RDATA"
+#defino los archivos donde guardo los resultados de la Bayesian Optimization
+archivo_log  <- "HT4110.txt"
+archivo_BO   <- "HT4110.RDATA"
 
 #leo si ya existe el log, para retomar en caso que se se corte el programa
 GLOBAL_iteracion  <- 0
@@ -180,7 +219,7 @@ obj.fun  <- makeSingleObjectiveFunction(
               minimize= FALSE,   #estoy Maximizando la ganancia
               noisy=    TRUE,
               par.set=  hs,
-              has.simple.signature = FALSE
+              has.simple.signature = FALSE   #espia Tomas Delvechio, dejar este parametro asi
              )
 
 ctrl  <- makeMBOControl( save.on.disk.at.time= 600,  save.file.path= archivo_BO)
