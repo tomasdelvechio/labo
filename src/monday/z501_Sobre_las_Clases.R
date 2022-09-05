@@ -21,9 +21,11 @@ require("treeClust")
 require("ggplot2")
 
 # Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+setwd("/home/tomas/workspace/uba/dmeyf")
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+#semillas <- c(17, 19, 23, 29, 31)
+semillas  <- c(697157, 585799, 906007, 748301, 372871)
+
 
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")
@@ -59,7 +61,10 @@ ggplot(dataset[mcuentas_saldo > 0 &
 
 ## Preguntas
 ## ¿Cómo funciona una árbol de decisión?
+#    No existe diferencias "geometricas" entre bja 1 y 2, respecto a las variables mas importantes.
 ## ¿Afecta a la separación de los árboles que las distribuciones sean similares?
+#    Personas en BAJA+1 y BAJA+2 son muy similares, se comportan parecido se esten por ir en un mes o dos
+#
 
 ## ---------------------------
 ## Step 3: Mezclando clases.
@@ -109,7 +114,10 @@ print(sum(
 
 ## Preguntas
 ## ¿Obtuvo una importante mejora en su modelo?
+#   No, empeoro ligeramente
 ## ¿Qué detalle fue creado con la clase BAJA+2 en mente que ya no aplica?
+#   Cambiamos la proporcion de clases. Este cambio de rebalanceo cambia el punto de corte (El 0.025)
+
 
 ## ---------------------------
 ## Step 4: De árboles a tablas, la venganza
@@ -281,3 +289,9 @@ for (s in semillas) {
 ## - ¿Qué estrategia piensa que puede ser útil para elegir el punto de corte?
 ## - ¿Para la búsqueda del mejor modelo que valor va a usar para la OB?
 ## - ¿Pros y contras de elegir los N mejores casos?
+
+# Puntos de cortes, termina siendo un parametro mas, un grado de libertad del modelo
+# El pto de corte puede llegar a variar la prediccion, pero tampoco es tan dramatico
+# elegirlo muy bajo.
+
+# probar puntos de cortes y ver predicciones
