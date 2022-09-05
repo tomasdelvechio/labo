@@ -295,3 +295,5 @@ for (s in semillas) {
 # elegirlo muy bajo.
 
 # probar puntos de cortes y ver predicciones
+
+# el pto de corte como parametro puede cambiar con diferentes combinaciones de parametros
