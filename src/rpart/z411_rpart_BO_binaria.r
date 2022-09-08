@@ -26,18 +26,19 @@ require("DiceKriging")
 require("mlrMBO")
 
 #aqui deben ir SUS semillas, se usan para  1-Repeated  (5-Fold Cross Validation)
-ksemilla_azar  <- c(102191)
+#semillas  <- c(697157, 585799, 906007, 748301, 372871)
+ksemilla_azar  <- c(697157)
 
 
 #Defino la  Optimizacion Bayesiana
 
-kBO_iter  <- 100   #cantidad de iteraciones de la Optimizacion Bayesiana
+kBO_iter  <- 150   #cantidad de iteraciones de la Optimizacion Bayesiana
 
 hs  <- makeParamSet(
-          makeNumericParam("cp"       , lower=  -1.0, upper=    0.1),
+          makeNumericParam("cp"       , lower=  -1.0, upper=   0.1),
           makeNumericParam("minsplit" , lower=   1,   upper= 5000 ),
           makeNumericParam("minbucket", lower=   1,   upper= 1000 ),
-          makeIntegerParam("maxdepth" , lower=   3L,  upper=   20L),  #la letra L al final significa ENTERO
+          makeIntegerParam("maxdepth" , lower=   3L,  upper=  150L),  #la letra L al final significa ENTERO
           forbidden = quote( minbucket > 0.5*minsplit ) )             # minbuket NO PUEDE ser mayor que la mitad de minsplit
 
 
@@ -132,7 +133,7 @@ ArbolesCrossValidation  <- function( semilla, data, param, qfolds, pagrupa )
                           seq(qfolds), # 1 2 3 4 5
                           MoreArgs= list( data, param), 
                           SIMPLIFY= FALSE,
-                          mc.cores= 5 )   #debe ir 1 si es Windows
+                          mc.cores= 8 )   #debe ir 1 si es Windows
 
   data[ , fold := NULL ]
 
@@ -173,7 +174,8 @@ EstimarGanancia  <- function( x )
 #------------------------------------------------------------------------------
 #Aqui empieza el programa
 
-setwd( "~/buckets/b1/" )
+#setwd( "~/buckets/b1/" )
+setwd("/home/tomas/workspace/uba/dmeyf")
 
 #cargo el dataset, aqui debe poner  SU RUTA
 dataset  <- fread("./datasets/competencia1_2022.csv")   #donde entreno
@@ -192,8 +194,8 @@ dir.create( "./exp/HT4110/", showWarnings = FALSE )
 setwd("./exp/HT4110/")   #Establezco el Working Directory DEL EXPERIMENTO
 
 #defino los archivos donde guardo los resultados de la Bayesian Optimization
-archivo_log  <- "HT4110.txt"
-archivo_BO   <- "HT4110.RDATA"
+archivo_log  <- "HT4110_2.txt"
+archivo_BO   <- "HT4110_2.RDATA"
 
 #leo si ya existe el log, para retomar en caso que se se corte el programa
 GLOBAL_iteracion  <- 0

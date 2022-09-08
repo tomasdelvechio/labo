@@ -8,7 +8,7 @@ require("rpart.plot")
 
 
 #Aqui se debe poner la carpeta de la materia de SU computadora local
-setwd("D:\\gdrive\\UBA2022\\")  #Establezco el Working Directory
+setwd("/home/tomas/workspace/uba/dmeyf")
 
 #cargo el dataset
 dataset  <- fread("./datasets/competencia1_2022.csv" )
@@ -27,36 +27,63 @@ dapply  <- dataset[ foto_mes==202103 ]  #defino donde voy a aplicar el modelo
 # obviamente rpart no puede ve  clase_ternaria para predecir  clase_binaria
 #  #no utilizo Visa_mpagado ni  mcomisiones_mantenimiento por drifting
 
+# id 1
+#modelo  <- rpart(formula=   "clase_binaria ~ . -clase_ternaria",
+#                 data=      dtrain,  #los datos donde voy a entrenar
+#                 xval=         5,
+#                 cp=       -0.62,#  -0.89
+#                 minsplit=  1171,   # 621
+#                 minbucket=  326,   # 309
+#                 maxdepth=    20 )  #  12
+
+# id 2
+#modelo  <- rpart(formula=   "clase_binaria ~ . -clase_ternaria",
+#                 data=      dtrain,  #los datos donde voy a entrenar
+#                 xval=         5,
+#                 cp=       -0.66,#  -0.89
+#                 minsplit=  1384,   # 621
+#                 minbucket=  309,   # 309
+#                 maxdepth=    20 )  #  12
+
+# id 4
+#modelo  <- rpart(formula=   "clase_binaria ~ . -clase_ternaria",
+#                 data=      dtrain,  #los datos donde voy a entrenar
+#                 xval=         5,
+#                 cp=       -0.28,#  -0.89
+#                 minsplit=  1402,   # 621
+#                 minbucket=  306,   # 309
+#                 maxdepth=     9 )  #  12
+
+# OB v3.1 de la C1 aplicado a este script
 modelo  <- rpart(formula=   "clase_binaria ~ . -clase_ternaria",
                  data=      dtrain,  #los datos donde voy a entrenar
                  xval=         0,
-                 cp=          -0.54,#  -0.89
-                 minsplit=  1073,   # 621
-                 minbucket=  278,   # 309
-                 maxdepth=     9 )  #  12
-
+                 cp=          -1,#  -0.89
+                 minsplit=  1181,   # 621
+                 minbucket=  492,   # 309
+                 maxdepth=     5 )  #  12
 
 #----------------------------------------------------------------------------
 # habilitar esta seccion si el Fiscal General  Alejandro Bolaños  lo autoriza
 #----------------------------------------------------------------------------
 
 # corrijo manualmente el drifting de  Visa_fultimo_cierre
-# dapply[ Visa_fultimo_cierre== 1, Visa_fultimo_cierre :=  4 ]
-# dapply[ Visa_fultimo_cierre== 7, Visa_fultimo_cierre := 11 ]
-# dapply[ Visa_fultimo_cierre==21, Visa_fultimo_cierre := 25 ]
-# dapply[ Visa_fultimo_cierre==14, Visa_fultimo_cierre := 18 ]
-# dapply[ Visa_fultimo_cierre==28, Visa_fultimo_cierre := 32 ]
-# dapply[ Visa_fultimo_cierre==35, Visa_fultimo_cierre := 39 ]
-# dapply[ Visa_fultimo_cierre> 39, Visa_fultimo_cierre := Visa_fultimo_cierre + 4 ]
+dapply[ Visa_fultimo_cierre== 1, Visa_fultimo_cierre :=  4 ]
+dapply[ Visa_fultimo_cierre== 7, Visa_fultimo_cierre := 11 ]
+dapply[ Visa_fultimo_cierre==21, Visa_fultimo_cierre := 25 ]
+dapply[ Visa_fultimo_cierre==14, Visa_fultimo_cierre := 18 ]
+dapply[ Visa_fultimo_cierre==28, Visa_fultimo_cierre := 32 ]
+dapply[ Visa_fultimo_cierre==35, Visa_fultimo_cierre := 39 ]
+dapply[ Visa_fultimo_cierre> 39, Visa_fultimo_cierre := Visa_fultimo_cierre + 4 ]
 
-# corrijo manualmente el drifting de  Visa_fultimo_cierre
-# dapply[ Master_fultimo_cierre== 1, Master_fultimo_cierre :=  4 ]
-# dapply[ Master_fultimo_cierre== 7, Master_fultimo_cierre := 11 ]
-# dapply[ Master_fultimo_cierre==21, Master_fultimo_cierre := 25 ]
-# dapply[ Master_fultimo_cierre==14, Master_fultimo_cierre := 18 ]
-# dapply[ Master_fultimo_cierre==28, Master_fultimo_cierre := 32 ]
-# dapply[ Master_fultimo_cierre==35, Master_fultimo_cierre := 39 ]
-# dapply[ Master_fultimo_cierre> 39, Master_fultimo_cierre := Master_fultimo_cierre + 4 ]
+# corrijo manualmente el drifting de  Master_fultimo_cierre
+dapply[ Master_fultimo_cierre== 1, Master_fultimo_cierre :=  4 ]
+dapply[ Master_fultimo_cierre== 7, Master_fultimo_cierre := 11 ]
+dapply[ Master_fultimo_cierre==21, Master_fultimo_cierre := 25 ]
+dapply[ Master_fultimo_cierre==14, Master_fultimo_cierre := 18 ]
+dapply[ Master_fultimo_cierre==28, Master_fultimo_cierre := 32 ]
+dapply[ Master_fultimo_cierre==35, Master_fultimo_cierre := 39 ]
+dapply[ Master_fultimo_cierre> 39, Master_fultimo_cierre := Master_fultimo_cierre + 4 ]
 
 
 #aplico el modelo a los datos nuevos
@@ -74,7 +101,8 @@ dfinal[ , prob_SI := prediccion[ , "SI"] ]
 
 # por favor cambiar por una semilla propia
 # que sino el Fiscal General va a impugnar la prediccion
-set.seed(102191)  
+#set.seed(102191)
+set.seed(697157)
 dfinal[ , azar := runif( nrow(dapply) ) ]
 
 # ordeno en forma descentente, y cuando coincide la probabilidad, al azar
@@ -93,6 +121,6 @@ for( corte  in  c( 7500, 8000, 8500, 9000, 9500, 10000, 10500, 11000 ) )
 
 
   fwrite( dfinal[ , list(numero_de_cliente, Predicted) ], #solo los campos para Kaggle
-           file= paste0( "./exp/KA4120/KA4120_005_",  corte, ".csv"),
+           file= paste0( "./exp/KA4120/KA4120_005_",  corte, "_C1OB_drift_correct.csv"),
            sep=  "," )
 }
