@@ -27,13 +27,13 @@ parameters <- read.csv("./datasets/rpart_parameters.csv", sep = ";")
 dtrain <- dataset[foto_mes == 202101] # defino donde voy a entrenar
 dapply <- dataset[foto_mes == 202103] # defino donde voy a aplicar el modelo
 
-ganancia <- function(probabilidades, clase) {
+ganancia <- function(probabilidades, clase, punto_corte = 0.025) {
     return(sum(
-        (probabilidades >= 0.025) * ifelse(clase == "evento", 78000, -2000))
+        (probabilidades >= punto_corte) * ifelse(clase == "evento", 78000, -2000))
     )
 }
 
-rendimiento_semillas_training <- function(df, semillas, p = 0.70) {
+rendimiento_semillas_training <- function(df, semillas, p = 0.70, punto_corte = 0.025) {
     cat("Probando Semillas en Train\n")
     for (semilla in semillas) {
         # Seteamos nuestra primera semilla
@@ -56,11 +56,21 @@ rendimiento_semillas_training <- function(df, semillas, p = 0.70) {
         )
         pred_testing <- predict(modelo, dtest, type = "prob")
 
-        cat(ganancia(pred_testing[, "evento"], dtest$clase_binaria) / 0.3, semilla, "\n")
+        cat(ganancia(pred_testing[, "evento"], dtest$clase_binaria, punto_corte) / 0.3, semilla, "\n")
     }
 }
 
-rendimiento_semillas_training(dtrain, semillas)
+rendimiento_puntos_corte_manual <- function(df, semillas) {
+    rango_puntos_corte = seq(24, 40) / 1000
+    for (punto_corte in rango_puntos_corte) {
+        cat("Punto de corte", punto_corte, "\n")
+        rendimiento_semillas_training(dtrain, semillas, punto_corte = punto_corte)
+    }
+
+}
+
+#rendimiento_semillas_training(dtrain, semillas)
+#rendimiento_puntos_corte_manual(dtrain, semillas)
 
 modelo <- rpart(
     formula = "clase_binaria ~ .",
@@ -93,7 +103,7 @@ dir.create("./exp/KAGC1", showWarnings = FALSE)
 # Crea un nombre de archivo unico
 output_filename = paste0("output-", format(Sys.time(), "%Y%m%d%H%M%S"), "-", round(runif(1) * 100), ".csv")
 
-fwrite(dapply[, list(numero_de_cliente, Predicted)], # solo los campos para Kaggle
-    file = paste0("./exp/KAGC1/", output_filename),
-    sep = ","
-)
+#fwrite(dapply[, list(numero_de_cliente, Predicted)], # solo los campos para Kaggle
+#    file = paste0("./exp/KAGC1/", output_filename),
+#    sep = ","
+#)
