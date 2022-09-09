@@ -22,7 +22,7 @@ dataset <- fread("./datasets/competencia1_original_2022.csv")
 
 # Creamos una clase binaria
 dataset[, clase_binaria := ifelse(
-    clase_ternaria == "BAJA+2",
+    clase_ternaria != "CONTINUA",
     "evento",
     "noevento"
 )]
