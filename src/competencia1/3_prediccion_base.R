@@ -90,8 +90,10 @@ prediccion <- predict(
     type = "prob"
 )
 
+punto_de_corte <- 0.035
+
 dapply[, prob_baja2 := prediccion[, "evento"]]
-dapply[, Predicted := as.numeric(prob_baja2 > 0.027)]
+dapply[, Predicted := as.numeric(prob_baja2 > punto_de_corte)]
 
 #cat(ganancia(dapply$prob_baja2, dapply$clase_binaria), semilla, "\n")
 
@@ -101,9 +103,13 @@ dir.create("./exp/", showWarnings = FALSE)
 dir.create("./exp/KAGC1", showWarnings = FALSE)
 
 # Crea un nombre de archivo unico
-output_filename = paste0("output-", format(Sys.time(), "%Y%m%d%H%M%S"), "-", round(runif(1) * 100), ".csv")
+output_filename <- paste0("output-", format(Sys.time(), "%Y%m%d%H%M%S"), "-", round(runif(1) * 100), ".csv")
 
 fwrite(dapply[, list(numero_de_cliente, Predicted)], # solo los campos para Kaggle
     file = paste0("./exp/KAGC1/", output_filename),
     sep = ","
 )
+
+cat("Punto de Corte:", punto_de_corte, "\n")
+cat("Cantidad de Bajas Predichas:", sum(dapply$Predicted), "\n")
+cat("Resultados para subir a Kaggle:", output_filename, "\n")
