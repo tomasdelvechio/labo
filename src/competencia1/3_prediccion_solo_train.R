@@ -51,7 +51,7 @@ rendimiento_semillas_training <- function(df, semillas, p = 0.70, punto_corte = 
             cp = parameters$cp,
             minsplit = parameters$minsplit,
             minbucket = parameters$minbucket,
-            maxdepth = parameters$maxdepth
+            maxdepth = 4
         )
         pred_testing <- predict(modelo, dtest, type = "prob")
 
