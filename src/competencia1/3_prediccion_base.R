@@ -22,7 +22,7 @@ semillas <- c(697157, 585799, 906007, 748301, 372871)
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")
 
-parameters <- read.csv("./datasets/rpart_parameters_ob4.csv", sep = ";")
+parameters <- read.csv("./datasets/rpart_parameters.csv", sep = ";")
 
 dtrain <- dataset[foto_mes == 202101] # defino donde voy a entrenar
 dapply <- dataset[foto_mes == 202103] # defino donde voy a aplicar el modelo
@@ -46,7 +46,7 @@ rendimiento_semillas_training <- function(df, semillas, p = 0.70, punto_corte = 
         dtrain <- df[in_training, ]
         dtest <- df[-in_training, ]
 
-        modelo <- rpart(clase_binaria ~ .,
+        modelo <- rpart(clase_binaria ~ . - numero_de_cliente,
             data = dtrain,
             xval = parameters$xval,
             cp = parameters$cp,
@@ -73,7 +73,7 @@ rendimiento_puntos_corte_manual <- function(df, semillas) {
 #rendimiento_puntos_corte_manual(dtrain, semillas)
 
 modelo <- rpart(
-    formula = "clase_binaria ~ .",
+    formula = "clase_binaria ~ . - numero_de_cliente",
     data = dtrain,
     xval = parameters$xval,
     cp = parameters$cp,
@@ -90,7 +90,7 @@ prediccion <- predict(
     type = "prob"
 )
 
-punto_de_corte <- 0.025
+punto_de_corte <- 0.047
 
 dapply[, prob_baja2 := prediccion[, "evento"]]
 dapply[, Predicted := as.numeric(prob_baja2 > punto_de_corte)]

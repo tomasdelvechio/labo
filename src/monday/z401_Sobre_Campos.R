@@ -60,7 +60,8 @@ calcular_ganancia <- function(modelo, test) {
 ## ---------------------------
 
 # Antes de empezar vamos a ver la importancia de variables
-modelo <- rpart(clase_binaria ~ .,
+modelo <- rpart(clase_binaria ~ . - numero_de_cliente,
+#modelo <- rpart(clase_binaria ~ .,
                 data = dtrain,
                 xval = 0,
                 cp = -1,
