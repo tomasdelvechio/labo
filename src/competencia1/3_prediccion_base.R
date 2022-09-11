@@ -22,7 +22,7 @@ semillas <- c(697157, 585799, 906007, 748301, 372871)
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")
 
-parameters <- read.csv("./datasets/rpart_parameters.csv", sep = ";")
+parameters <- read.csv("./datasets/rpart_parameters_ob2_1.csv", sep = ";")
 
 dtrain <- dataset[foto_mes == 202101] # defino donde voy a entrenar
 dapply <- dataset[foto_mes == 202103] # defino donde voy a aplicar el modelo
@@ -90,7 +90,7 @@ prediccion <- predict(
     type = "prob"
 )
 
-punto_de_corte <- 0.047
+punto_de_corte <- 0.0291
 
 dapply[, prob_baja2 := prediccion[, "evento"]]
 dapply[, Predicted := as.numeric(prob_baja2 > punto_de_corte)]

@@ -134,11 +134,10 @@ if (feature_engineering) {
         }
     }
 
-    variables_nuevas <- c(nuevas, variables_a_rankear)
-
-    campos2 <- paste(variables_nuevas, collapse = " + ")
-    formula2 <- paste0("clase_binaria ~ ", campos2)
-    cat(formula2)
+    #variables_nuevas <- c(nuevas, variables_a_rankear)
+    #campos2 <- paste(variables_nuevas, collapse = " + ")
+    #formula2 <- paste0("clase_binaria ~ ", campos2)
+    #cat(formula2)
 
 }
 
