@@ -33,7 +33,7 @@ dataset[, clase_ternaria := NULL]
 # Probamos sacando la mejor variables
 #dataset[, ctrx_quarter := NULL]    ID Exp 20 -> No funciona
 
-feature_engineering <- TRUE
+feature_engineering <- FALSE
 
 if (feature_engineering) {
     ## Arma secreta aportada por Gustavo Denicolay
