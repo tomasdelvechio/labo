@@ -22,7 +22,7 @@ semillas <- c(697157, 585799, 906007, 748301, 372871)
 # Cargamos el dataset
 dataset <- fread("./datasets/competencia1_2022.csv")
 
-parameters <- read.csv("./datasets/rpart_parameters_ob2.csv", sep = ";")
+parameters <- read.csv("./datasets/rpart_parameters_ob3.csv", sep = ";")
 
 dtrain <- dataset[foto_mes == 202101] # defino donde voy a entrenar
 dapply <- dataset[foto_mes == 202103] # defino donde voy a aplicar el modelo
