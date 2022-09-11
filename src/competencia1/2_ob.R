@@ -92,13 +92,13 @@ optimizacion_bayesiana <- function(dataset, semillas) {
     set.seed(semillas[1])
 
     ctrl <- makeMBOControl()
-    ctrl <- setMBOControlTermination(ctrl, iters = 20L)
+    ctrl <- setMBOControlTermination(ctrl, iters = 150L)
     ctrl <- setMBOControlInfill(
         ctrl,
         crit = makeMBOInfillCritEI(),
         opt = "focussearch",
         # sacar parámetro opt.focussearch.points en próximas ejecuciones
-        opt.focussearch.points = 20
+        #opt.focussearch.points = 20
     )
 
     surr_km <- makeLearner("regr.km", predict.type = "se", covtype = "matern3_2")
