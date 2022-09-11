@@ -6,7 +6,7 @@ require("data.table")
 require("rpart")
 require("rpart.plot")
 
-setwd("." )  #establezco la carpeta donde voy a trabajar
+setwd("/home/tomas/workspace/uba/dmeyf") # establezco la carpeta donde voy a trabajar
 #cargo el dataset
 dataset  <- fread( "./datasets/competencia1_2022.csv")
 
@@ -21,7 +21,7 @@ dapply <- dataset[ foto_mes==202103 ]
 
 #Primero  veo como quedan mis arboles
 modelo_original <- rpart(
-    formula= "clase_ternaria ~ . -mcomisiones_mantenimiento -Visa_mpagado",
+    formula= "clase_binaria ~ . - numero_de_cliente",
     data= dtrain,
     model= TRUE,
     xval= 0,
@@ -36,14 +36,14 @@ modelo_original <- rpart(
 modelo_original$frame[ modelo_original$frame$var %like% "canarito", "complexity"] <- -666
 modelo_pruned  <- prune(  modelo_original, -666 )
 
-prediccion  <- predict( modelo_pruned, dapply, type = "prob")[,"BAJA+2"]
+prediccion  <- predict( modelo_pruned, dapply, type = "prob")[,"evento"]
 
 entrega  <-  as.data.table( list( "numero_de_cliente"= dapply$numero_de_cliente,
                                   "Predicted"= as.integer(  prediccion > 0.025 ) ) )
 
-fwrite( entrega, paste0( "./kaggle/stopping_at_canaritos.csv"), sep="," )
+fwrite(entrega, paste0("./exp/KAGC1/stopping_at_canaritos.csv"), sep = ",")
 
-pdf(file = "./work/stopping_at_canaritos.pdf", width=28, height=4)
+pdf(file = "./exp/KAGC1/stopping_at_canaritos.pdf", width = 28, height = 4)
 prp(modelo_pruned, extra=101, digits=5, branch=1, type=4, varlen=0, faclen=0)
 dev.off()
 
