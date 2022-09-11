@@ -73,7 +73,7 @@ rendimiento_puntos_corte_manual <- function(df, semillas) {
 #rendimiento_puntos_corte_manual(dtrain, semillas)
 
 modelo <- rpart(
-    formula = "clase_binaria ~ . - numero_de_cliente",
+    formula = "clase_binaria ~ . - numero_de_cliente - campo1",
     data = dtrain,
     xval = parameters$xval,
     cp = parameters$cp,
