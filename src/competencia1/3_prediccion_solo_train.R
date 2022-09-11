@@ -34,7 +34,7 @@ ganancia <- function(probabilidades, clase, punto_corte = 0.025) {
 
 rendimiento_semillas_training <- function(df, semillas, p = 0.70, punto_corte = 0.025) {
     #cat("Probando Semillas en Train\n")
-    formulas = list(
+    formulas <- list(
         "clase_binaria ~ . - ctrx_quarter",
         "clase_binaria ~ .",
         "clase_binaria ~ . - numero_de_cliente"
@@ -78,5 +78,5 @@ rendimiento_puntos_corte_manual <- function(df, semillas) {
 
 cat("Punto de Corte", "Semilla", "Formula", "Ganancia", "\n", sep = ";")
 
-#rendimiento_semillas_training(dtrain, semillas)
-rendimiento_puntos_corte_manual(dtrain, semillas)
+rendimiento_semillas_training(dtrain, semillas, punto_corte = 0.047)
+#rendimiento_puntos_corte_manual(dtrain, semillas)
