@@ -378,6 +378,8 @@ modelo6 <- rpart(formula2,
 
 print(modelo6$variable.importance)
 
+calcular_ganancia(modelo6, dtest)
+
 # Importante: Que una modelo tenga otras variables importantes no implicar que
 # sea mejor, ni peor. Eso se debe evaluar con los experimentos
 

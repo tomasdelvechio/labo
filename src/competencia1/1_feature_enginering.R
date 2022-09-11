@@ -120,6 +120,26 @@ if (feature_engineering) {
     for (var in variables_a_rankear) {
         dataset[, (paste(prefix, var, sep = "")) := ntile(get(var), 10)]
     }
+
+    # interacción entre variables
+
+    nuevas <- c()
+    for (var1 in variables_a_rankear) {
+        for (var2 in variables_a_rankear) {
+            if (var1 != var2) {
+                nueva <- paste(var1, var2, sep = "___")
+                dataset[, (nueva) := get(var1) * get(var2)]
+                nuevas <- c(nuevas, nueva)
+            }
+        }
+    }
+
+    variables_nuevas <- c(nuevas, variables_a_rankear)
+
+    campos2 <- paste(variables_nuevas, collapse = " + ")
+    formula2 <- paste0("clase_binaria ~ ", campos2)
+    cat(formula2)
+
 }
 
 fwrite(dataset, "./datasets/competencia1_2022.csv")
