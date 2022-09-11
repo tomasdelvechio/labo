@@ -61,7 +61,7 @@ rendimiento_semillas_training <- function(df, semillas, p = 0.70, punto_corte = 
 }
 
 rendimiento_puntos_corte_manual <- function(df, semillas) {
-    rango_puntos_corte = seq(24, 40) / 1000
+    rango_puntos_corte <- seq(24, 40) / 1000
     for (punto_corte in rango_puntos_corte) {
         cat("Punto de corte", punto_corte, "\n")
         rendimiento_semillas_training(dtrain, semillas, punto_corte = punto_corte)
