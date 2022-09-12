@@ -13,6 +13,7 @@ require("mlrMBO")
 require("rgenoud")
 require("dplyr")
 require("rlist")
+require("Hmisc")
 
 # Poner la carpeta de la materia de SU computadora local
 setwd("/home/tomas/workspace/uba/dmeyf")
