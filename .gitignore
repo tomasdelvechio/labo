@@ -190,3 +190,4 @@ project/target
 rpart.Rproj
 
 src/scripts/*
+!rpart_parameters_with_ob.csv
