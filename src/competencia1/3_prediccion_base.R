@@ -92,7 +92,7 @@ prediccion <- predict(
     type = "prob"
 )
 
-punto_de_corte <- 0.047
+punto_de_corte <- 0.0291
 
 dapply[, prob_baja2 := prediccion[, "evento"]]
 dapply[, Predicted := as.numeric(prob_baja2 > punto_de_corte)]
