@@ -11,6 +11,7 @@ require("lhs")
 require("DiceKriging")
 require("mlrMBO")
 require("rgenoud")
+require("dplyr")
 
 # Poner la carpeta de la materia de SU computadora local
 setwd("/home/tomas/workspace/uba/dmeyf")
@@ -33,7 +34,7 @@ dataset[, clase_ternaria := NULL]
 # Probamos sacando la mejor variables
 #dataset[, ctrx_quarter := NULL]    ID Exp 20 -> No funciona
 
-feature_engineering <- FALSE
+feature_engineering <- TRUE
 
 if (feature_engineering) {
     ## Arma secreta aportada por Gustavo Denicolay
