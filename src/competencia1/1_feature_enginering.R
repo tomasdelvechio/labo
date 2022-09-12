@@ -12,6 +12,7 @@ require("DiceKriging")
 require("mlrMBO")
 require("rgenoud")
 require("dplyr")
+require("rlist")
 
 # Poner la carpeta de la materia de SU computadora local
 setwd("/home/tomas/workspace/uba/dmeyf")
@@ -132,6 +133,14 @@ if (feature_engineering) {
                 dataset[, (nueva) := get(var1) * get(var2)]
                 nuevas <- c(nuevas, nueva)
             }
+        }
+    }
+
+    for (campo in colnames(dataset)) {
+        if (dataset[, length(unique(get(campo))) > 100]) {
+            dataset[, paste0(campo, "_bin") := as.integer(cut2(dataset[, get(campo)], m = 1, g = 63))]
+            if (campo != "numero_de_cliente") dataset[, paste0(campo) := NULL]
+            #cat(campo, " ")
         }
     }
 
