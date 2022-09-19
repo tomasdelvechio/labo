@@ -23,9 +23,9 @@ require("ggplot2")
 require("lightgbm")
 
 # Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+setwd("/home/tomas/workspace/uba/dmeyf")
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+semillas  <- c(697157, 585799, 906007, 748301, 372871)
 
 # Cargamos los datasets y nos quedamos solo con 202101 y 202103
 dataset <- fread("./datasets/competencia2_2022.csv.gz")
@@ -99,9 +99,9 @@ setorder(marzo, cols = -pred)
 
 # PROBAR MULTIPLES VALORES
 set.seed(semillas[3])
-m <- 500
-f <- 2000
-t <- 12000
+m <- 500 # salto de cnatidad de los envios a probar
+f <- 2000 # desde
+t <- 12000 # hasta
 
 leaderboad <- data.table()
 split <- caret::createDataPartition(marzo$clase_ternaria, p = 0.50, list = FALSE)
@@ -118,8 +118,10 @@ for (s in seq(f, t, m)) {
                         ))
 }
 # Graficamos
-ggplot(leaderboad, aes(x = envio, y = valor, color = board)) + geom_line()
+ggplot(leaderboad[board == "publico"], aes(x = envio, y = valor, color = board)) + geom_line()
 
+ggplot(leaderboad, aes(x = envio, y = valor, color = board)) + geom_line()
+dev.off()
 ## ACTIVE LEARNING: Juegue con los parámetros y busque si hay alguna información
 ## en el leaderboard público que le de una estrategia para elegir la cantidad
 ## adecuada para ganar maximizar la ganancia del privado.
