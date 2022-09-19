@@ -81,7 +81,7 @@ t0 <- Sys.time()
 modelo_rf_1 <- ranger(clase_binaria1 ~ ., data = dtrain,
                   probability = TRUE,
                   num.trees = 100,
-                  min.node.size=10,
+                  min.node.size = 10,
                   mtry = n_variables,
                   splitrule = "gini",
                   sample.fraction = 0.66,
@@ -209,7 +209,7 @@ dtrain  <- lgb.Dataset(data = data.matrix(enero), label = clase_binaria)
 
 ganancia_lgb <- function(probs, datos) {
   return(list("name" = "ganancia",
-                "value" =  sum( (probs > 0.025) *
+                "value" =  sum((probs > 0.025) *
                     ifelse(getinfo(datos, "label") == 1, 78000, -2000)) / 0.2,
                 "higher_better" = TRUE))
 }

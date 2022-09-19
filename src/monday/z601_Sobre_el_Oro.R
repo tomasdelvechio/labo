@@ -64,7 +64,7 @@ marzo[, sum(ifelse(pred > 0.025,
 
 leaderboad <- data.table()
 set.seed(semillas[1])
-for (i in 1:100) {
+for (i in 1:1000) {
   split <- caret::createDataPartition(marzo$clase_ternaria,
                      p = 0.70, list = FALSE)
   privado <- sum((marzo$pred[split] > 0.025) *
@@ -77,6 +77,7 @@ for (i in 1:100) {
 
 leaderboad$r_privado <- frank(leaderboad$privado)
 leaderboad$r_publico <- frank(leaderboad$publico)
+leaderboad$suma_pub_priv <- leaderboad$r_privado + leaderboad$r_publico
 
 leaderboad
 
