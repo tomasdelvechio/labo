@@ -20,9 +20,9 @@ require("ggplot2")
 require("lightgbm")
 
 # Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+setwd("/home/tomas/workspace/uba/dmeyf")
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+semillas  <- c(697157, 585799, 906007, 748301, 372871)
 
 # Cargamos los datasets y nos quedamos solo con 202101 y 202103
 dataset <- fread("./datasets/competencia2_2022.csv.gz")
@@ -33,6 +33,8 @@ rm(dataset)
 clase_binaria <- ifelse(marzo$clase_ternaria == "CONTINUA", 0, 1)
 clase_real <- marzo$clase_ternaria
 marzo$clase_ternaria <- NULL
+# Probar todo borrando la mejor variable (ctrx_quarter)
+#marzo$ctrx_quarter <- NULL
 
 dtrain  <- lgb.Dataset(data   = data.matrix(marzo),
                        label  = clase_binaria,
@@ -102,9 +104,9 @@ model_lgbm_cv <- lgb.cv(
 
         # Variables de crecimiento del árbol.
         max_depth = 12, # -1 = No limitar
-        min_data_in_leaf = 4000,
+        min_data_in_leaf = 4000, # equivalente al min_bucket de rpart
         feature_pre_filter = FALSE, #feature_pre_filter: Evita que LightGBM deje de lado variables que considera malas.
-        num_leaves = 100,
+        num_leaves = 100, # numero de hojas o nodos terminales del arbol
 
         # Parámetros que fueron sacados de los rf porque lo que anda se mete:
         feature_fraction = 0.50, # Porcentaje de columnas que van a usarse en un árbol
@@ -122,6 +124,8 @@ model_lgbm_cv <- lgb.cv(
 
         # Cuántos árboles vamos a generar
         num_iterations = 100, # Debe ser un número muy grande, recordar el double descent!!!.
+        # Agregar muchas mas iteraciones: subirlo lo mas que se puede (por ejemplo 1000)
+        # Luego de optimizar los hiperparametros, darle mucho mas, p.e., 2000 o 3000
         early_stopping_rounds = 100 # Corta cuando después de tantos árboles no vio una ganancia mejor a la máxima.
     ),
     verbose = -1
