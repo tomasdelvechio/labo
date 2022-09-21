@@ -57,8 +57,8 @@ for (semilla in semillas) {
                         min_data_in_leaf = 4000,
                         learning_rate = 0.05,
                         verbose = -1,
-                        num_leaves = 20
-                        ),
+                        num_leaves = 20,
+                        max_depth = 5),
             verbose = -1
         )
 
@@ -75,7 +75,9 @@ for (semilla in semillas) {
                 params = list(objective = "binary",
                                 max_bin = 15,
                                 min_data_in_leaf = 4000,
-                                learning_rate = 0.05),
+                                learning_rate = 0.05,
+                                num_leaves = 20,
+                                max_depth = 5),
                 verbose = -1)
 
     # También tiene su importancia de variables
