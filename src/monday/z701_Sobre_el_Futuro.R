@@ -105,8 +105,8 @@ t <- 12000 # hasta
 
 leaderboad <- data.table()
 split <- caret::createDataPartition(marzo$clase_ternaria, p = 0.50, list = FALSE)
-marzo$board[split] <- "privado"
 marzo$board[-split] <- "publico"
+marzo$board[split] <- "privado"
 for (s in seq(f, t, m)) {
     privado <- marzo[1:s, sum(ifelse(board == "privado",
         ifelse(clase_ternaria == "BAJA+2", 78000, -2000), 0)) / 0.5]
@@ -125,4 +125,3 @@ dev.off()
 ## ACTIVE LEARNING: Juegue con los parámetros y busque si hay alguna información
 ## en el leaderboard público que le de una estrategia para elegir la cantidad
 ## adecuada para ganar maximizar la ganancia del privado.
-

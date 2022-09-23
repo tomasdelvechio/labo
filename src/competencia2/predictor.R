@@ -27,7 +27,7 @@ semillas  <- c(697157, 585799, 906007, 748301, 372871)
 
 # Cargamos todo para tener un código limpio
 dataset <- fread("./datasets/competencia2_2022.csv.gz")
-marzo <- dataset[foto_mes == 202101]
+marzo <- dataset[foto_mes == 202103]
 mayo <- dataset[foto_mes == 202105]
 rm(dataset)
 

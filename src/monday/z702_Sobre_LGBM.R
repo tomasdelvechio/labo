@@ -79,7 +79,7 @@ model_lgbm_cv <- lgb.cv(
         # Seteamos la semilla. Se puede setear semillar para cada uso de parámetro aleatorio.
         # - bagging_seed
         # - feature_fraction_seed
-        seed= semillas[1],
+        seed = semillas[1],
 
         # Definimos que tipo de problema vamos a resolver. De esta forma sabe que loss function utilizar.
         objective = "binary",
