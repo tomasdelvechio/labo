@@ -7,6 +7,10 @@ require("ggplot2")
 require("randomForest")
 require("lightgbm")
 
+setwd("/home/tomas/workspace/uba/dmeyf")
+semillas <- c(697157, 585799, 906007, 748301, 372871)
+# Mejor semilla del publico 585799
+
 wlog <- function(line, file = "./logs/c2-predictor.log", append = TRUE, newrun = FALSE) {
     if (newrun == TRUE) {
         cat(file = "./logs/c2-predictor.log", "=======================", "\n", append = TRUE)
@@ -20,10 +24,6 @@ wlog("", newrun = TRUE)
 
 #cat(file = "./logs/c2-predictor.log", "=======================", "\n", append = TRUE)
 #cat(file = "./logs/c2-predictor.log", "Nueva ejecución de predictor.R:", format(Sys.time(), "%Y%m%d%H%M%S"), "\n", append = TRUE)
-
-setwd("/home/tomas/workspace/uba/dmeyf")
-semillas  <- c(697157, 585799, 906007, 748301, 372871)
-# Mejor semilla del publico 585799
 
 # Cargamos todo para tener un código limpio
 dataset <- fread("./datasets/competencia2_2022.csv.gz")
@@ -45,6 +45,26 @@ ganancia_lgb <- function(probs, datos) {
                 "higher_better" = TRUE))
 }
 
+params <- list(
+    objective = "binary",
+    max_bin = 15,
+    first_metric_only = TRUE,
+    boost_from_average = TRUE,
+    feature_pre_filter = FALSE,
+    max_depth = -1,
+    min_gain_to_split = 0,
+    lambda_l1 = 0,
+    lambda_l2 = 0,
+    max_bin = 31,
+    num_iterations = 791,
+    force_row_wise = TRUE,
+    seed = 697157,
+    learning_rate = 0.005036823375,
+    feature_fraction = 0.78382879,
+    min_data_in_leaf = 1662,
+    num_leaves = 457
+)
+
 
 for (semilla in semillas) {
     set.seed(semilla)
@@ -52,13 +72,7 @@ for (semilla in semillas) {
             eval = ganancia_lgb,
             stratified = TRUE,
             nfold = 5,
-            param = list(objective = "binary",
-                        max_bin = 15,
-                        min_data_in_leaf = 4000,
-                        learning_rate = 0.05,
-                        verbose = -1,
-                        num_leaves = 20,
-                        max_depth = 5),
+            param = params,
             verbose = -1
         )
 
@@ -72,12 +86,7 @@ for (semilla in semillas) {
     # Una vez que elegimos los parámetros tenemos que entrenar con todos.
     model_lgm <- lightgbm(data = dtrain,
                 nrounds = model_lgbm_cv$best_iter, # <--- OJO! Double Descent alert
-                params = list(objective = "binary",
-                                max_bin = 15,
-                                min_data_in_leaf = 4000,
-                                learning_rate = 0.05,
-                                num_leaves = 20,
-                                max_depth = 5),
+                params = params,
                 verbose = -1)
 
     # También tiene su importancia de variables
