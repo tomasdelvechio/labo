@@ -23,8 +23,8 @@ require("DiceKriging")
 require("mlrMBO")
 
 options(error = function() { 
-  traceback(20); 
-  options(error = NULL); 
+  traceback(20)
+  options(error = NULL)
   stop("exiting after script error") 
 })
 
@@ -32,11 +32,11 @@ options(error = function() {
 
 #Aqui se cargan los hiperparametros
 hs <- makeParamSet( 
-         makeNumericParam("learning_rate",    lower=    0.005, upper=    0.3),
-         makeNumericParam("feature_fraction", lower=    0.2  , upper=    1.0),
-         makeIntegerParam("min_data_in_leaf", lower=    0L   , upper=  8000L),
-         makeIntegerParam("num_leaves",       lower=   16L   , upper=  1024L),
-         makeIntegerParam("envios",           lower= 5000L   , upper= 15000L)
+         makeNumericParam("learning_rate",    lower =    0.005, upper =    0.3),
+         makeNumericParam("feature_fraction", lower =    0.2  , upper =    1.0),
+         makeIntegerParam("min_data_in_leaf", lower =    0L   , upper =  8000L),
+         makeIntegerParam("num_leaves",       lower =   16L   , upper =  1024L),
+         makeIntegerParam("envios",           lower = 5000L   , upper = 15000L)
         )
 
 #defino los parametros de la corrida, en una lista, la variable global  PARAM
@@ -49,14 +49,14 @@ PARAM$input$dataset       <- "./datasets/competencia2_2022.csv.gz"
 PARAM$input$training      <- c( 202103 )
 
 PARAM$trainingstrategy$undersampling  <-  1.0   # un undersampling de 0.1  toma solo el 10% de los CONTINUA
-PARAM$trainingstrategy$semilla_azar   <- 102191  #Aqui poner la propia semilla
+PARAM$trainingstrategy$semilla_azar <- 697157 # Aqui poner la propia semilla
 
 PARAM$hyperparametertuning$iteraciones <- 100
 PARAM$hyperparametertuning$xval_folds  <- 5
 PARAM$hyperparametertuning$POS_ganancia  <- 78000
 PARAM$hyperparametertuning$NEG_ganancia  <- -2000
 
-PARAM$hyperparametertuning$semilla_azar  <- 102191  #Aqui poner la propia semilla, PUEDE ser distinta a la de trainingstrategy
+PARAM$hyperparametertuning$semilla_azar <- 697157 # Aqui poner la propia semilla, PUEDE ser distinta a la de trainingstrategy
 
 #------------------------------------------------------------------------------
 #graba a un archivo los componentes de lista
@@ -189,7 +189,7 @@ EstimarGanancia_lightgbm  <- function( x )
 #Aqui empieza el programa
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("~/buckets/b1/")   #Establezco el Working Directory
+setwd("/home/tomas/workspace/uba/dmeyf")
 
 #cargo el dataset donde voy a entrenar el modelo
 dataset  <- fread( PARAM$input$dataset )

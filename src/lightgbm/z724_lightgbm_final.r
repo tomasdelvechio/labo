@@ -23,17 +23,17 @@ PARAM$input$training      <- c( 202103 )
 PARAM$input$future        <- c( 202105 )
 
 PARAM$finalmodel$max_bin           <-     31
-PARAM$finalmodel$learning_rate     <-      0.0280015981   #0.0142501265
-PARAM$finalmodel$num_iterations    <-    328  #615
-PARAM$finalmodel$num_leaves        <-   1015  #784
-PARAM$finalmodel$min_data_in_leaf  <-   5542  #5628
-PARAM$finalmodel$feature_fraction  <-      0.7832319551  #0.8382482539
-PARAM$finalmodel$semilla           <- 102191
+PARAM$finalmodel$learning_rate <- 0.005036823375 # 0.0142501265
+PARAM$finalmodel$num_iterations    <-    791  #615
+PARAM$finalmodel$num_leaves        <-   457  #784
+PARAM$finalmodel$min_data_in_leaf  <-   1662  #5628
+PARAM$finalmodel$feature_fraction <- 0.78382879 # 0.8382482539
+PARAM$finalmodel$semilla <- 697157
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 #Aqui empieza el programa
-setwd( "~/buckets/b1" )
+setwd("/home/tomas/workspace/uba/dmeyf")
 
 #cargo el dataset donde voy a entrenar
 dataset  <- fread(PARAM$input$dataset, stringsAsFactors= TRUE)
