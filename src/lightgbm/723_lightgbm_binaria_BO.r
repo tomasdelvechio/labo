@@ -262,4 +262,4 @@ if (!file.exists(kbayesiana)) {
   run  <- mboContinue(kbayesiana)   #retomo en caso que ya exista
 }
 
-quit(save = "no")
+#quit(save = "no")

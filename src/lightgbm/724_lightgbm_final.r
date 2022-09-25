@@ -23,12 +23,12 @@ PARAM$input$training      <- c( 202103 )
 PARAM$input$future        <- c( 202105 )
 
 PARAM$finalmodel$max_bin           <-     31
-PARAM$finalmodel$num_iterations    <-    970  #615
+PARAM$finalmodel$num_iterations    <-    1021  #615
 PARAM$finalmodel$semilla <- 697157
-PARAM$finalmodel$learning_rate <- 0.005301229450038 # 0.0142501265
-PARAM$finalmodel$feature_fraction <- 0.307355765531438 # 0.8382482539
-PARAM$finalmodel$min_data_in_leaf  <-   107  #5628
-PARAM$finalmodel$num_leaves        <-   494  #784
+PARAM$finalmodel$learning_rate <- 0.030650734362149 # 0.0142501265
+PARAM$finalmodel$feature_fraction <- 0.766895859756822 # 0.8382482539
+PARAM$finalmodel$min_data_in_leaf  <-   822  #5628
+PARAM$finalmodel$num_leaves        <-   256  #784
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ setorder( tb_entrega, -prob )
 
 #genero archivos con los  "envios" mejores
 #deben subirse "inteligentemente" a Kaggle para no malgastar submits
-cortes <- seq( 5000, 12000, by=500 )
+cortes <- seq( 5000, 15000, by=500 )
 for( envios  in  cortes )
 {
   tb_entrega[  , Predicted := 0L ]
