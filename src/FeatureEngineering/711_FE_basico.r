@@ -111,7 +111,7 @@ infinitos <- lapply(names(dataset), function(.name) dataset[, sum(is.infinite(ge
 infinitos_qty <- sum(unlist(infinitos))
 if (infinitos_qty > 0) {
   cat("ATENCION, hay", infinitos_qty, "valores infinitos en tu dataset. Seran pasados a NA\n")
-  dataset[mapply(is.infinite, dataset)] <<- NA
+  dataset[mapply(is.infinite, dataset)] <- NA
 }
 
 
@@ -123,7 +123,7 @@ nans_qty <- sum(unlist(nans))
 if (nans_qty > 0) {
   cat("ATENCION, hay", nans_qty, "valores NaN 0/0 en tu dataset. Seran pasados arbitrariamente a 0\n")
   cat("Si no te gusta la decision, modifica a gusto el programa!\n\n")
-  dataset[mapply(is.nan, dataset)] <<- 0
+  dataset[mapply(is.nan, dataset)] <- 0
 }
 
 #--------------------------------------
