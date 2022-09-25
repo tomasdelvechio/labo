@@ -45,7 +45,7 @@ params <- list()
 
 params$experimento  <- "HT7231"
 
-params$input$dataset       <- "./datasets/competencia2_2022.csv.gz"
+params$input$dataset <- "./exp/FE7110/dataset_7110.csv.gz"
 params$input$training      <- c(202103)
 
 params$trainingstrategy$undersampling  <-  1.0   # un undersampling de 0.1  toma solo el 10% de los CONTINUA
