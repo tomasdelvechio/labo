@@ -22,7 +22,7 @@ options(error = function() {
 setwd( "~/buckets/b1/" )
 
 #cargo el dataset
-dataset  <- fread( "competencia2_2022.csv.gz")
+dataset  <- fread( "./datasets/competencia2_2022.csv.gz")
 
 #creo la carpeta donde va el experimento
 # FE  representa  Feature Engineering
@@ -108,7 +108,7 @@ infinitos_qty  <- sum( unlist( infinitos) )
 if( infinitos_qty > 0 )
 {
   cat( "ATENCION, hay", infinitos_qty, "valores infinitos en tu dataset. Seran pasados a NA\n" )
-  dataset[mapply(is.infinite, dataset)] <<- NA
+  dataset[mapply(is.infinite, dataset)] <- NA
 }
 
 
@@ -121,7 +121,7 @@ if( nans_qty > 0 )
 {
   cat( "ATENCION, hay", nans_qty, "valores NaN 0/0 en tu dataset. Seran pasados arbitrariamente a 0\n" )
   cat( "Si no te gusta la decision, modifica a gusto el programa!\n\n")
-  dataset[mapply(is.nan, dataset)] <<- 0
+  dataset[mapply(is.nan, dataset)] <- 0
 }
 
 

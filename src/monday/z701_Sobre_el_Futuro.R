@@ -118,7 +118,9 @@ for (s in seq(f, t, m)) {
                         ))
 }
 # Graficamos
-ggplot(leaderboad[board == "publico"], aes(x = envio, y = valor, color = board)) + geom_line()
+==== BASE ====
+ggplot(leaderboad, aes(x = envio, y = valor, color = board)) + geom_line()
+==== BASE ====
 
 ggplot(leaderboad, aes(x = envio, y = valor, color = board)) + geom_line()
 dev.off()
