@@ -19,9 +19,12 @@ require("lightgbm")
 require("xgboost")
 
 # Poner la carpeta de la materia de SU computadora local
-setwd("/home/aleb/dmeyf2022")
+#setwd("/home/aleb/dmeyf2022")
 # Poner sus semillas
-semillas <- c(17, 19, 23, 29, 31)
+#semillas <- c(17, 19, 23, 29, 31)
+
+setwd("/home/tomas/workspace/uba/dmeyf")
+semillas  <- c(697157, 585799, 906007, 748301, 372871)
 
 # Cargamos los datasets y nos quedamos solo con 202101 y 202103
 dataset <- fread("./datasets/competencia2_2022.csv.gz")
