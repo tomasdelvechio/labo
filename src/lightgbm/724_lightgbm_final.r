@@ -23,12 +23,12 @@ PARAM$input$training      <- c( 202103 )
 PARAM$input$future        <- c( 202105 )
 
 PARAM$finalmodel$max_bin           <-     31
-PARAM$finalmodel$num_iterations    <-    1021  #615
+PARAM$finalmodel$num_iterations    <-    117  #615
 PARAM$finalmodel$semilla <- 697157
-PARAM$finalmodel$learning_rate <- 0.030650734362149 # 0.0142501265
-PARAM$finalmodel$feature_fraction <- 0.766895859756822 # 0.8382482539
-PARAM$finalmodel$min_data_in_leaf  <-   822  #5628
-PARAM$finalmodel$num_leaves        <-   256  #784
+PARAM$finalmodel$learning_rate <- 0.117556659847283 # 0.0142501265
+PARAM$finalmodel$feature_fraction <- 0.693457185608323 # 0.8382482539
+PARAM$finalmodel$min_data_in_leaf  <-   6963  #5628
+PARAM$finalmodel$num_leaves        <-   281  #784
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
