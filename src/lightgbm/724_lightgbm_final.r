@@ -23,12 +23,17 @@ PARAM$input$training      <- c( 202103 )
 PARAM$input$future        <- c( 202105 )
 
 PARAM$finalmodel$max_bin           <-     31
-PARAM$finalmodel$num_iterations    <-    117  #615
+PARAM$finalmodel$num_iterations    <-    1119
 PARAM$finalmodel$semilla <- 697157
-PARAM$finalmodel$learning_rate <- 0.117556659847283 # 0.0142501265
-PARAM$finalmodel$feature_fraction <- 0.693457185608323 # 0.8382482539
-PARAM$finalmodel$min_data_in_leaf  <-   6963  #5628
-PARAM$finalmodel$num_leaves        <-   281  #784
+PARAM$finalmodel$learning_rate <- 0.005821832685663
+PARAM$finalmodel$feature_fraction <- 0.481968090703839
+PARAM$finalmodel$min_data_in_leaf  <-   153
+PARAM$finalmodel$num_leaves        <-   523
+
+PARAM$finalmodel$lambda_l1 <- 36.1689466224694
+PARAM$finalmodel$lambda_l2 <- 19.2317603887943
+PARAM$finalmodel$min_gain_to_split <- 2.36363415242929
+
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -82,6 +87,9 @@ modelo  <- lgb.train( data= dtrain,
                                    num_leaves=         PARAM$finalmodel$num_leaves,
                                    min_data_in_leaf=   PARAM$finalmodel$min_data_in_leaf,
                                    feature_fraction=   PARAM$finalmodel$feature_fraction,
+                                   lambda_l1=          PARAM$finalmodel$lambda_l1,
+                                   lambda_l2=          PARAM$finalmodel$lambda_l2,
+                                   min_gain_to_split=  PARAM$finalmodel$min_gain_to_split,
                                    seed=               PARAM$finalmodel$semilla
                                   )
                     )
@@ -120,7 +128,7 @@ setorder( tb_entrega, -prob )
 
 #genero archivos con los  "envios" mejores
 #deben subirse "inteligentemente" a Kaggle para no malgastar submits
-cortes <- seq( 5000, 15000, by=500 )
+cortes <- seq( 6000, 10000, by=250 )
 for( envios  in  cortes )
 {
   tb_entrega[  , Predicted := 0L ]

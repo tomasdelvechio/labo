@@ -36,7 +36,12 @@ hs <- makeParamSet(
     makeNumericParam("feature_fraction", lower =    0.2, upper =    1.0),
     makeIntegerParam("min_data_in_leaf", lower =     0L, upper =  8000L),
     makeIntegerParam("num_leaves",       lower =    16L, upper =  1024L),
-    makeIntegerParam("envios",           lower =  5000L, upper = 15000L)
+    makeIntegerParam("envios",           lower =  5000L, upper = 15000L),
+
+    makeIntegerParam("max_bin",           lower =  15L, upper = 255L),
+    makeNumericParam("lambda_l1",           lower =  0, upper = 100),
+    makeNumericParam("lambda_l2",           lower =  0, upper = 100),
+    makeNumericParam("min_gain_to_split",           lower =  0, upper = 15)
 )
 
 # defino los parametros de la corrida, en una lista, la variable global params
@@ -51,7 +56,7 @@ params$input$training      <- c(202103)
 params$trainingstrategy$undersampling  <-  1.0   # un undersampling de 0.1  toma solo el 10% de los CONTINUA
 params$trainingstrategy$semilla_azar <- 697157 # Aqui poner la propia semilla
 
-params$hyperparametertuning$iteraciones <- 100
+params$hyperparametertuning$iteraciones <- 300
 params$hyperparametertuning$xval_folds  <- 5
 params$hyperparametertuning$POS_ganancia  <- 78000
 params$hyperparametertuning$NEG_ganancia  <- -2000

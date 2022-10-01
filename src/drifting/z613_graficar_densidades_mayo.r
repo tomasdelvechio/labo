@@ -43,7 +43,8 @@ graficar_campo  <- function( campo )
 setwd("/home/tomas/workspace/uba/dmeyf")
 
 #cargo el dataset donde voy a entrenar
-dataset  <- fread("./datasets/competencia2_2022.csv.gz")
+#dataset <- fread("./datasets/competencia2_2022.csv.gz")
+dataset <- fread("./exp/FE7110/dataset_7110.csv.gz")
 
 dataset  <- dataset[  foto_mes %in% c( 202103, 202105 ) ]
 
