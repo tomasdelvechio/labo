@@ -55,5 +55,20 @@ Agregado de Hiperparametros al OB: principalmente lambda_l1 y lambda_l2. Agregan
 * Parametros: "20220930 162134"
 * Predictor: `src/lightgbm/724_lightgbm_final.r`
 * Salidas: KA7240_[6000:10000].csv (Son 15 archivos que suben de a 250)
+* https://docs.google.com/spreadsheets/d/1cozQ3RZF0fhHUgbqlxKRg6O2j0jxN5PVA9sZNwtUdks/edit#gid=1905231634
+* SHA: ec8450624d6ef988e13d743e84ab4603521b37fc
+
+## Id Exp 5
+
+Se eliminan del dataset a predecir las variables que se considera "a ojo" que tienen data drifting. Se deja la OB de ID Exp 4.
+
+* Dataset utilizado: `dataset_7110.csv.gz`
+* FE: Si
+* Script para visualizar Data Drifting: `src/drifting/z613_graficar_densidades_mayo.r`
+* Script FE: `711_FE_basico_mas_propias.r`
+* OB: `src/lightgbm/723_lightgbm_binaria_BO.r`
+* Parametros: "20220930 162134"
+* Predictor: `src/lightgbm/724_lightgbm_final.r`
+* Salidas: KA7240_[6000:10000].csv (Son 15 archivos que suben de a 250)
 * 
-* SHA: 23b253c0092c0f83557803409af8da0a209e22ff
+* SHA: 
