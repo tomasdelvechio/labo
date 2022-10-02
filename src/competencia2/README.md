@@ -85,5 +85,29 @@ En lugar de eliminar las variables, se aplica frank a la columna que antes se el
 * Parametros: "20220930 162134"
 * Predictor: `src/lightgbm/724_lightgbm_final.r`
 * Salidas: KA7240_[6000:12000].csv (Son 15 archivos que suben de a 100)
-* 
+* NO
+* SHA: e00cc96072d845b1f542a085930a7c0da3534d68
+
+TRUNCO: No se subio nada
+
+## Id Exp 7
+
+Se volvió al modelo original que mejor puntaje dio en el público, y se comenzó a jugar ahí con la ganancia pública, seleccionando el peor de la meseta.
+
+* Dataset utilizado: `./datasets/competencia2_2022.csv.gz`
+* FE: NO
+* Script para visualizar Data Drifting: Ninguno
+* Script FE: NO
+* OB: NO
+* Parametros: NO
+* Predictor: `src/lightgbm/724_exp_7.r`
+  * Salidas: KA7240_[6000:12000].csv (Son 15 archivos que suben de a 50)
+* https://docs.google.com/spreadsheets/d/1cozQ3RZF0fhHUgbqlxKRg6O2j0jxN5PVA9sZNwtUdks/edit#gid=678908947
 * SHA: 
+
+
+
+## Id Exp 8
+
+
+
