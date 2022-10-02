@@ -18,7 +18,7 @@ require("lightgbm")
 PARAM <- list()
 PARAM$experimento <- "KA7240"
 
-PARAM$input$dataset <- "./datasets/competencia2_2022.csv.gz"
+PARAM$input$dataset <- "./exp/FE7110/dataset_7110.csv.gz"
 PARAM$input$training <- c(202103)
 PARAM$input$future <- c(202105)
 
@@ -28,7 +28,7 @@ PARAM$finalmodel$num_iterations <- 791 # 615
 PARAM$finalmodel$num_leaves <- 457 # 784
 PARAM$finalmodel$min_data_in_leaf <- 1662 # 5628
 PARAM$finalmodel$feature_fraction <- 0.78382879 # 0.8382482539
-PARAM$finalmodel$semilla <- 697157
+PARAM$finalmodel$semilla <- 906007
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------

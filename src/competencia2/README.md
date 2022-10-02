@@ -103,11 +103,20 @@ Se volvió al modelo original que mejor puntaje dio en el público, y se comenz�
 * Predictor: `src/lightgbm/724_exp_7.r`
   * Salidas: KA7240_[6000:12000].csv (Son 15 archivos que suben de a 50)
 * https://docs.google.com/spreadsheets/d/1cozQ3RZF0fhHUgbqlxKRg6O2j0jxN5PVA9sZNwtUdks/edit#gid=678908947
-* SHA: 
-
-
+* SHA: 7bbaab4e8847ab3adc91e27a4212fdfd23a14c2b
 
 ## Id Exp 8
 
+Prueba con el dataset + FE que elimina Data Drifting
 
+* Dataset utilizado: `dataset_7110.csv.gz`
+* FE: Si
+* Script para visualizar Data Drifting: Ninguno
+* Script FE: `src/FeatureEngineering/711_FE_basico_mas_propias_eliminacion_data_drifting.r`
+* OB: NO
+* Parametros: NO
+* Predictor: `src/lightgbm/724_exp_7.r`
+  * Salidas: KA7240_[6000:12000].csv (Son 15 archivos que suben de a 50)
+* https://docs.google.com/spreadsheets/d/1cozQ3RZF0fhHUgbqlxKRg6O2j0jxN5PVA9sZNwtUdks/edit#gid=231939486
+* SHA: 
 

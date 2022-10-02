@@ -28,7 +28,7 @@ setwd("/home/tomas/workspace/uba/dmeyf")
 semillas  <- c(697157, 585799, 906007, 748301, 372871)
 
 # Cargamos los datasets y nos quedamos solo con 202101 y 202103
-dataset <- fread("./datasets/competencia2_2022.csv.gz")
+dataset <- fread("./exp/FE7110/dataset_7110.csv.gz")
 enero <- dataset[foto_mes == 202101]
 marzo <- dataset[foto_mes == 202103]
 
@@ -60,7 +60,7 @@ model_lgm <- lightgbm(data = dtrain,
 ## Step 3: Veamos como funcionó en Marzo
 ## ---------------------------
 
-marzo$pred <- predict(model_lgm, data.matrix(marzo[, 1:154]))
+marzo$pred <- predict(model_lgm, data.matrix(marzo[, 1:(dim(marzo)[2]-1)]))
 sum((marzo$pred > 0.025) * ifelse(marzo$clase_ternaria == "BAJA+2", 78000, -2000))
 
 ## ---------------------------
