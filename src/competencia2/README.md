@@ -70,5 +70,20 @@ Se eliminan del dataset a predecir las variables que se considera "a ojo" que ti
 * Parametros: "20220930 162134"
 * Predictor: `src/lightgbm/724_lightgbm_final.r`
 * Salidas: KA7240_[6000:10000].csv (Son 15 archivos que suben de a 250)
+* https://docs.google.com/spreadsheets/d/1cozQ3RZF0fhHUgbqlxKRg6O2j0jxN5PVA9sZNwtUdks/edit#gid=10659219
+* SHA: aaf9420f3a7cde3e6139f35016c942aed6956625
+
+## Id Exp 6
+
+En lugar de eliminar las variables, se aplica frank a la columna que antes se eliminaba.
+
+* Dataset utilizado: `dataset_7110.csv.gz`
+* FE: Si
+* Script para visualizar Data Drifting: `src/drifting/z613_graficar_densidades_mayo.r`
+* Script FE: `711_FE_basico_mas_propias.r`
+* OB: `src/lightgbm/723_lightgbm_binaria_BO.r`
+* Parametros: "20220930 162134"
+* Predictor: `src/lightgbm/724_lightgbm_final.r`
+* Salidas: KA7240_[6000:12000].csv (Son 15 archivos que suben de a 100)
 * 
 * SHA: 
