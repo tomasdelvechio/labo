@@ -54,7 +54,7 @@ params$input$dataset <- "./exp/FE7110/dataset_7110.csv.gz"
 params$input$training      <- c(202103)
 
 params$trainingstrategy$undersampling  <-  1.0   # un undersampling de 0.1  toma solo el 10% de los CONTINUA
-params$trainingstrategy$semilla_azar <- 697157 # Aqui poner la propia semilla
+params$trainingstrategy$semilla_azar <- 906007 # Aqui poner la propia semilla
 
 params$hyperparametertuning$iteraciones <- 300
 params$hyperparametertuning$xval_folds  <- 5

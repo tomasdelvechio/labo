@@ -118,5 +118,11 @@ Prueba con el dataset + FE que elimina Data Drifting
 * Predictor: `src/lightgbm/724_exp_7.r`
   * Salidas: KA7240_[6000:12000].csv (Son 15 archivos que suben de a 50)
 * https://docs.google.com/spreadsheets/d/1cozQ3RZF0fhHUgbqlxKRg6O2j0jxN5PVA9sZNwtUdks/edit#gid=231939486
-* SHA: 
+* SHA: ab8dd127443371ccc7c9b92208667ed981f7bf2e
+
+## Id Exp 9
+
+Prueba con imputación de -1 en lugar de 0
+
+
 

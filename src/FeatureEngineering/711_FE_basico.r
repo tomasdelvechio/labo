@@ -114,6 +114,10 @@ if (infinitos_qty > 0) {
   dataset[mapply(is.infinite, dataset)] <- NA
 }
 
+#cols <- c("foto_mes")
+#for (columna in colnames(dataset)) {
+#  dataset[is.na(columna), columna := dataset[.BY, median(columna, na.rm = TRUE), on = cols], by = c(cols)]
+#}
 
 #valvula de seguridad para evitar valores NaN  que es 0/0
 #paso los NaN a 0 , decision polemica si las hay
@@ -123,7 +127,7 @@ nans_qty <- sum(unlist(nans))
 if (nans_qty > 0) {
   cat("ATENCION, hay", nans_qty, "valores NaN 0/0 en tu dataset. Seran pasados arbitrariamente a 0\n")
   cat("Si no te gusta la decision, modifica a gusto el programa!\n\n")
-  dataset[mapply(is.nan, dataset)] <- 0
+  dataset[mapply(is.nan, dataset)] <- -1
 }
 
 #--------------------------------------

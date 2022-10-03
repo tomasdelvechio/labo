@@ -25,10 +25,11 @@ require("lightgbm")
 # Poner la carpeta de la materia de SU computadora local
 setwd("/home/tomas/workspace/uba/dmeyf")
 # Poner sus semillas
-semillas  <- c(697157, 585799, 906007, 748301, 372871)
+semillas  <- c(42, 697157, 585799, 906007, 748301, 372871)
 
 # Cargamos los datasets y nos quedamos solo con 202101 y 202103
 dataset <- fread("./exp/FE7110/dataset_7110.csv.gz")
+#dataset <- fread("./datasets/competencia2_2022.csv.gz")
 enero <- dataset[foto_mes == 202101]
 marzo <- dataset[foto_mes == 202103]
 
@@ -44,15 +45,19 @@ enero$clase_ternaria <- NULL
 # Armamos el dataset de train para LGBM
 dtrain  <- lgb.Dataset(data = data.matrix(enero), label = clase_binaria)
 
+early_stoppings <- c(as.integer(50 + 5 / 0.023463737229234))
 model_lgm <- lightgbm(data = dtrain,
             nrounds = 100,
             params = list(objective = "binary",
                           max_bin = 31,
-                          learning_rate = 0.005036823375,
+                          learning_rate = 0.023463737229234,
                           num_iterations = 791,
-                          num_leaves = 457,
-                          min_data_in_leaf = 1662,
-                          feature_fraction = 0.78382879
+                          num_leaves = 148,
+                          min_data_in_leaf = 79,
+                          feature_fraction = 0.350337184048083
+                          #lambda_l1 = 1.71277329721618,
+                          #lambda_l2 = 72.7279631157529,
+                          #min_gain_to_split = 11.0664622222673
                         ),
              verbose = -1)
 
@@ -102,37 +107,45 @@ sum((marzo$pred[-split] > 0.025) * ifelse(marzo$clase_ternaria[-split] == "BAJA+
 setorder(marzo, cols = -pred)
 
 # PROBAR MULTIPLES VALORES
-seed <- semillas[3]
-set.seed(seed)
-m <- 50 # salto de cnatidad de los envios a probar
-f <- 2000 # desde
-t <- 12000 # hasta
+#seed <- semillas[1]
+for (semilla in semillas) {
+    set.seed(906007)
+    m <- 50 # salto de cnatidad de los envios a probar
+    f <- 2000 # desde
+    t <- 12000 # hasta
 
-leaderboad <- data.table()
-split <- caret::createDataPartition(marzo$clase_ternaria, p = 0.50, list = FALSE)
-marzo$board[-split] <- "publico"
-marzo$board[split] <- "privado"
-for (s in seq(f, t, m)) {
-    privado <- marzo[1:s, sum(ifelse(board == "privado",
-        ifelse(clase_ternaria == "BAJA+2", 78000, -2000), 0)) / 0.5]
-    publico <- marzo[1:s, sum(ifelse(board == "publico",
-        ifelse(clase_ternaria == "BAJA+2", 78000, -2000), 0)) / 0.5]
-    leaderboad <- rbindlist(list(leaderboad,
-                        data.table(envio = s, board = "privado", valor = privado),
-                        data.table(envio = s, board = "publico", valor = publico)
-                        ))
+    leaderboad <- data.table()
+    split <- caret::createDataPartition(marzo$clase_ternaria, p = 0.50, list = FALSE)
+    marzo$board[-split] <- "publico"
+    marzo$board[split] <- "privado"
+    for (s in seq(f, t, m)) {
+        privado <- marzo[1:s, sum(ifelse(board == "privado",
+            ifelse(clase_ternaria == "BAJA+2", 78000, -2000), 0
+        )) / 0.5]
+        publico <- marzo[1:s, sum(ifelse(board == "publico",
+            ifelse(clase_ternaria == "BAJA+2", 78000, -2000), 0
+        )) / 0.5]
+        leaderboad <- rbindlist(list(
+            leaderboad,
+            data.table(envio = s, board = "privado", valor = privado),
+            data.table(envio = s, board = "publico", valor = publico)
+        ))
+    }
+    # Graficamos
+    # ggplot(leaderboad[board == "publico"], aes(x = envio, y = valor, color = board)) + geom_line()
+    ggplot(leaderboad, aes(x = envio, y = valor, color = board)) +
+        geom_line()
+
+    cat("semilla", "max publico", "max privado", "min publico", "min privado", "\n", sep=";")
+    cat(semilla, max(leaderboad[board == "publico", valor]),
+        max(leaderboad[board == "privado", valor]),
+        min(leaderboad[board == "publico", valor]),
+        min(leaderboad[board == "privado", valor]), "\n",
+        sep = ";"
+    )
+
+
+    ## ACTIVE LEARNING: Juegue con los parámetros y busque si hay alguna información
+    ## en el leaderboard público que le de una estrategia para elegir la cantidad
+    ## adecuada para ganar maximizar la ganancia del privado.
 }
-# Graficamos
-#ggplot(leaderboad[board == "publico"], aes(x = envio, y = valor, color = board)) + geom_line()
-#ggplot(leaderboad, aes(x = envio, y = valor, color = board)) + geom_line()
-
-cat("semilla", "max publico", "max privado", "min publico", "min privado")
-cat(seed, max(leaderboad[board == "publico", valor]),
-    max(leaderboad[board == "privado", valor]),
-    min(leaderboad[board == "publico", valor]),
-    min(leaderboad[board == "privado", valor]), "\n")
-
-
-## ACTIVE LEARNING: Juegue con los parámetros y busque si hay alguna información
-## en el leaderboard público que le de una estrategia para elegir la cantidad
-## adecuada para ganar maximizar la ganancia del privado.
