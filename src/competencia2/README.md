@@ -124,5 +124,16 @@ Prueba con el dataset + FE que elimina Data Drifting
 
 Prueba con imputación de -1 en lugar de 0
 
+* Dataset utilizado: `dataset_7110.csv.gz`
+* FE: Si
+* Script para visualizar Data Drifting: Ninguno
+* Script FE: `src/FeatureEngineering/711_FE_basico_mas_propias_eliminacion_data_drifting.r`
+* OB: Si
+* Parametros: "20221002 184524"
+* Predictor: `src/lightgbm/724_exp_7.r`
+  * Salidas: KA7240_[6000:12000].csv (Son 15 archivos que suben de a 50)
+* https://docs.google.com/spreadsheets/d/1cozQ3RZF0fhHUgbqlxKRg6O2j0jxN5PVA9sZNwtUdks/edit#gid=1641261218
+* SHA: 0d02d7388b18994a5ad90f2c26ced244c73c4f90
+
 
 
