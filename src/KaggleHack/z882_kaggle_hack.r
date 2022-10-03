@@ -23,8 +23,8 @@ PARAM$input$dataset       <- "./datasets/competencia2_2022.csv.gz"
 PARAM$input$training      <- c( 202101 )
 PARAM$input$future        <- c( 202103 )
 
-PARAM$semilla1  <- 200177 
-PARAM$semilla2  <- 410551
+PARAM$semilla1 <- 697157
+PARAM$semilla2 <- 585799
 PARAM$semillas_particion <- 3
 PARAM$semillas_modelo    <- 50
 
@@ -53,7 +53,7 @@ particionar  <- function( data,  division, agrupa="",  campo="fold", start=1, se
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 #Aqui empieza el programa
-setwd( "~/buckets/b1" )
+setwd("/home/tomas/workspace/uba/dmeyf")
 
 
 #cargo el dataset donde voy a entrenar

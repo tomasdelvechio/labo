@@ -74,7 +74,7 @@ setwd("./exp/DR6130/")
 
 
 
-pdf("densidades_03_05.pdf")
+pdf("densidades_03_05_con_rankeo.pdf")
 
 for( campo in  campos_buenos )
 {
