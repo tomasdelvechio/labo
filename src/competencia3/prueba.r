@@ -1,3 +1,6 @@
+
+a <<- 3
+
 rm(list = ls())
 gc(verbose = FALSE)
 
