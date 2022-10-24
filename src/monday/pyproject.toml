@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "monday"
+version = "0.1.0"
+description = ""
+authors = ["alejandrob17 <alejandro.daniel@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+lightgbm = "^3.3.2"
+shap = "^0.41.0"
+ipykernel = "^6.16.0"
+umap-learn = "^0.5.3"
+matplotlib = "^3.6.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
