@@ -14,13 +14,13 @@ require("lightgbm")
 
 #Parametros del script
 PARAM  <- list()
-PARAM$experimento  <- "ZZ9410"
-PARAM$exp_input  <- "HT9410"
+PARAM$experimento  <- "ZZ9410_exp3"
+PARAM$exp_input  <- "HT9410_exp2"
 
-PARAM$modelos  <- 10
+PARAM$modelos  <- 2
 # FIN Parametros del script
 
-ksemilla <- 906007
+ksemilla <- 697157
 
 #------------------------------------------------------------------------------
 options(error = function() { 
@@ -138,9 +138,9 @@ for( i in  1:PARAM$modelos )
 
 
   #genero los archivos para Kaggle
-  cortes  <- seq( from=  7000,
-                  to=   11000,
-                  by=     500 )
+  cortes  <- seq( from= 10000,
+                  to=   13000,
+                  by=    1000 )
 
 
   setorder( tb_prediccion, -prob )

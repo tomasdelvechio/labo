@@ -14,12 +14,12 @@ require("data.table")
 
 #Parametros del script
 PARAM  <- list()
-PARAM$experimento  <- "DR9141"
+PARAM$experimento  <- "DR9141_exp2"
 
-PARAM$exp_input  <- "CA9060"
+PARAM$exp_input <- "CA9060_exp2"
 
 #valores posibles  "ninguno" "rank_simple" , "rank_cero_fijo" , "deflacion"
-PARAM$metodo  <- "deflacion"
+PARAM$metodo <- "rank_cero_fijo"
 # FIN Parametros del script
 
 
