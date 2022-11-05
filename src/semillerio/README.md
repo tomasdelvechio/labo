@@ -56,7 +56,7 @@ Todo sobre Dataset de la C4, pero con PARAMS y training strategy de competencia 
 - Reutilizar Archivo BO_log.txt del ganador de la C3 (Agustín Diez) (Subido al bucket y replicado en este repo)
   - `src/semillerio/HT9410_semillerio/BO_log.txt`
 
-- `src/semillerio/z1291_SM_semillero_lgbm.r`
+- `src/semillerio/z1291_SM_semillero_lgbm_under.r`
 
 ## Limitaciones
 
