@@ -52,8 +52,10 @@ Todo sobre Dataset de la C4, pero con PARAMS y training strategy de competencia 
 - `src/competencia3/z906_reparar_dataset.r`
 - `src/competencia3/z914_corregir_drifting.r`
 - `src/competencia3/z925_FE_historia.r`
-- `src/competencia3/z931_training_strategy.r`
-- `src/competencia3/z941_HT_lightgbm.r`
+- `src/competencia3/z931_training_strategy_under.r`
+- Reutilizar Archivo BO_log.txt del ganador de la C3 (Agustín Diez) (Subido al bucket y replicado en este repo)
+  - `src/semillerio/HT9410_semillerio/BO_log.txt`
+
 - `src/semillerio/z1291_SM_semillero_lgbm.r`
 
 ## Limitaciones
