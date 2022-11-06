@@ -12,6 +12,7 @@ gc()             #garbage collection
 require("data.table")
 
 require("lightgbm")
+require("primes")
 
 #Parametros del script
 PARAM <- list()
@@ -19,9 +20,15 @@ PARAM$experimento <- "ZZ9410_semillerio"
 PARAM$exp_input <- "HT9410_semillerio"
 
 # PARAM$modelos  <- 2
-PARAM$modelo <- 1 # se usa el mejor de la OB
-PARAM$ksemillas <- list(697157, 585799, 906007, 748301, 372871)
+PARAM$modelo <- 1 # se usa el mejor de la OB, pero a futuro podria variar esto
+PARAM$semilla_primos <- 697157
+PARAM$semillerio <- 100 # ¿De cuanto será nuestro semillerio?
 # FIN Parametros del script
+
+# genero un vector de una cantidad de PARAM$semillerio  de semillas,  buscando numeros primos al azar
+primos <- generate_primes(min = 100000, max = 1000000) # genero TODOS los numeros primos entre 100k y 1M
+set.seed(PARAM$semilla_primos) # seteo la semilla que controla al sample de los primos
+ksemillas <- sample(primos)[1:PARAM$semillerio] # me quedo con  PARAM$semillerio primos al azar
 
 #------------------------------------------------------------------------------
 options(error = function() { 
@@ -71,13 +78,13 @@ for( ksemilla in  PARAM$ksemillas )
   parametros <- as.list(copy(tb_log[PARAM$modelo]))
   iteracion_bayesiana  <- parametros$iteracion_bayesiana
 
-  arch_modelo  <- paste0( "modelo_" ,
-                          sprintf( "%02d", PARAM$modelo ),
-                          "_",
-                          sprintf( "%03d", iteracion_bayesiana ),
-                          "_",
-                          sprintf( "%d", ksemilla ),
-                          ".model" )
+  #arch_modelo  <- paste0( "modelo_" ,
+  #                        sprintf( "%02d", PARAM$modelo ),
+  #                        "_",
+  #                        sprintf( "%03d", iteracion_bayesiana ),
+  #                        "_",
+  #                        sprintf( "%d", ksemilla ),
+  #                        ".model" )
 
 
   #creo CADA VEZ el dataset de lightgbm
@@ -122,20 +129,20 @@ for( ksemilla in  PARAM$ksemillas )
                              verbose= -100 )
 
   #grabo el modelo, achivo .model
-  lgb.save( modelo_final,
-            file= arch_modelo )
+  #lgb.save( modelo_final,
+  #          file= arch_modelo )
 
   #creo y grabo la importancia de variables
-  tb_importancia  <- as.data.table( lgb.importance( modelo_final ) )
-  fwrite( tb_importancia,
-          file= paste0( "impo_", 
-                        sprintf( "%02d", i ),
-                        "_",
-                        sprintf( "%03d", iteracion_bayesiana ),
-                        "_",
-                        sprintf( "%d", ksemilla ),
-                        ".txt" ),
-          sep= "\t" )
+  #tb_importancia  <- as.data.table( lgb.importance( modelo_final ) )
+  #fwrite( tb_importancia,
+  #        file= paste0( "impo_", 
+  #                      sprintf( "%02d", PARAM$modelo ),
+  #                      "_",
+  #                      sprintf( "%03d", iteracion_bayesiana ),
+  #                      "_",
+  #                      sprintf( "%d", ksemilla ),
+  #                      ".txt" ),
+  #        sep= "\t" )
 
 
   #genero la prediccion, Scoring
@@ -152,7 +159,7 @@ for( ksemilla in  PARAM$ksemillas )
   colnames(tb_prediccion_semillerio) <- c("numero_de_cliente", "prediccion")
 
   nom_pred  <- paste0( "pred_",
-                       sprintf( "%02d", i ),
+                       sprintf( "%02d", PARAM$modelo ),
                        "_",
                        sprintf( "%03d", iteracion_bayesiana),
                        "_",
@@ -184,7 +191,7 @@ for( ksemilla in  PARAM$ksemillas )
 
     nom_submit  <- paste0( PARAM$experimento, 
                            "_",
-                           sprintf( "%02d", i ),
+                           sprintf( "%02d", PARAM$modelo ),
                            "_",
                            sprintf( "%03d", iteracion_bayesiana ),
                            "_",
@@ -218,10 +225,9 @@ for( ksemilla in  PARAM$ksemillas )
 
   }
 
-
   #borro y limpio la memoria para la vuelta siguiente del for
   rm( tb_prediccion )
-  rm( tb_importancia )
+  #rm( tb_importancia )
   rm( modelo_final)
   rm( parametros )
   rm( dtrain )
