@@ -78,6 +78,27 @@ write.csv(ksemillas, file = "ksemillas.csv", row.names = FALSE)
 #genero un modelo para cada uno de las modelos_qty MEJORES iteraciones de la Bayesian Optimization
 for( ksemilla in ksemillas )
 {
+
+  # optimización: si los archivos ya existen, puedo hacer skip de esta semilla
+  nom_submit <- paste0(
+    PARAM$experimento,
+    "_",
+    sprintf("%d", ksemilla),
+    ".csv"
+  )
+
+  nom_submit_semillero <- paste0(
+    PARAM$experimento,
+    "_",
+    sprintf("%d", ksemilla),
+    "_semillerio.csv"
+  )
+
+  # Salteo las semillas ya procesadas
+  if (!file.exists(nom_submit) || !file.exists(nom_submit_semillero)) {
+    next # si, podría ser mas sofisticado, pero queda para el refactor
+  }
+
   message("procesando semilla ", ksemilla) # un poco de debug
   parametros <- as.list(copy(tb_log[PARAM$modelo]))
   iteracion_bayesiana  <- parametros$iteracion_bayesiana
@@ -140,7 +161,7 @@ for( ksemilla in ksemillas )
   # Rank de la predicción y se agrega al semillerio
   tb_semillerio_rank[, paste0("rank_", ksemilla) := frank(tb_prediccion)]
   # Esta es la predicción del semillerio para la semilla i-esima
-  tb_prediccion_semillerio <- data.table(dt[, list(numero_de_cliente)], rowMeans(dt[, c(-1)]))
+  tb_prediccion_semillerio <- data.table(tb_semillerio_rank[, list(numero_de_cliente)], rowMeans(tb_semillerio_rank[, c(-1)]))
   colnames(tb_prediccion_semillerio) <- c("numero_de_cliente", "prediccion")
 
   #genero los archivos para Kaggle
@@ -159,22 +180,12 @@ for( ksemilla in ksemillas )
     tb_prediccion_semillerio[, Predicted := 0L]
     tb_prediccion_semillerio[1:corte, Predicted := 1L]
 
-    nom_submit  <- paste0( PARAM$experimento, 
-                           "_",
-                           sprintf("%d", ksemilla),
-                           ".csv" )
-
+    # Guardo el submit individual
     fwrite(  tb_prediccion[ , list( numero_de_cliente, Predicted ) ],
              file= nom_submit,
              sep= "," )
 
-    nom_submit_semillero <- paste0(
-        PARAM$experimento,
-        "_",
-        sprintf("%d", ksemilla),
-        "_semillerio.csv"
-    )
-
+    # Guardo el submit del semillerio
     fwrite(tb_prediccion_semillerio[, list(numero_de_cliente, Predicted)],
         file = nom_submit_semillero,
         sep = ","
