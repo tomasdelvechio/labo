@@ -78,26 +78,19 @@ write.csv(ksemillas, file = "ksemillas.csv", row.names = FALSE)
 #genero un modelo para cada uno de las modelos_qty MEJORES iteraciones de la Bayesian Optimization
 for( ksemilla in ksemillas )
 {
+  message("procesando semilla ", ksemilla) # un poco de debug
   parametros <- as.list(copy(tb_log[PARAM$modelo]))
   iteracion_bayesiana  <- parametros$iteracion_bayesiana
 
-  #arch_modelo  <- paste0( "modelo_" ,
-  #                        sprintf( "%02d", PARAM$modelo ),
-  #                        "_",
-  #                        sprintf( "%03d", iteracion_bayesiana ),
-  #                        "_",
-  #                        sprintf( "%d", ksemilla ),
-  #                        ".model" )
-
-
+  message("Creando dataset ")
+  timestamp()
   #creo CADA VEZ el dataset de lightgbm
   dtrain  <- lgb.Dataset( data=    data.matrix( dataset[ , campos_buenos, with=FALSE] ),
                           label=   dataset[ , clase01],
                           weight=  dataset[ , ifelse( clase_ternaria %in% c("BAJA+2"), 1.0000001, 1.0)],
                           free_raw_data= FALSE
                         )
-
-  ganancia  <- parametros$ganancia
+  timestamp()
 
   #elimino los parametros que no son de lightgbm
   parametros$experimento  <- NULL
@@ -127,59 +120,33 @@ for( ksemilla in ksemillas )
   
   #genero el modelo entrenando en los datos finales
   set.seed( parametros$seed )
+  message("Entrenando el final model")
+  timestamp()
   modelo_final  <- lightgbm( data= dtrain,
                              param=  parametros,
                              verbose= -100 )
+  timestamp()
 
-  #grabo el modelo, achivo .model
-  #lgb.save( modelo_final,
-  #          file= arch_modelo )
-
-  #creo y grabo la importancia de variables
-  #tb_importancia  <- as.data.table( lgb.importance( modelo_final ) )
-  #fwrite( tb_importancia,
-  #        file= paste0( "impo_", 
-  #                      sprintf( "%02d", PARAM$modelo ),
-  #                      "_",
-  #                      sprintf( "%03d", iteracion_bayesiana ),
-  #                      "_",
-  #                      sprintf( "%d", ksemilla ),
-  #                      ".txt" ),
-  #        sep= "\t" )
-
-
+  message("Prediciendo")
+  timestamp()
   #genero la prediccion, Scoring
   prediccion  <- predict( modelo_final,
                           data.matrix( dfuture[ , campos_buenos, with=FALSE ] ) )
-
+  timestamp()
+  
   tb_prediccion  <- dfuture[  , list( numero_de_cliente, foto_mes ) ]
   tb_prediccion[ , prob := prediccion ]
 
   # Rank de la predicción y se agrega al semillerio
   tb_semillerio_rank[, paste0("rank_", ksemilla) := frank(tb_prediccion)]
   # Esta es la predicción del semillerio para la semilla i-esima
-  tb_prediccion_semillerio <- data.table(dt[, numero_de_cliente], rowMeans(dt[, c(-1)]))
+  tb_prediccion_semillerio <- data.table(dt[, list(numero_de_cliente)], rowMeans(dt[, c(-1)]))
   colnames(tb_prediccion_semillerio) <- c("numero_de_cliente", "prediccion")
-
-  nom_pred  <- paste0( "pred_",
-                       sprintf( "%02d", PARAM$modelo ),
-                       "_",
-                       sprintf( "%03d", iteracion_bayesiana),
-                       "_",
-                        sprintf( "%d", ksemilla ),
-                       ".csv"  )
-
-  fwrite( tb_prediccion,
-          file= nom_pred,
-          sep= "\t" )
-
 
   #genero los archivos para Kaggle
   cortes  <- seq( from=  11000,
                   to=    11000,
                   by=        0 )
-
-  
 
   setorder( tb_prediccion, -prob )
   setorder(tb_prediccion_semillerio, prediccion) # Esto es un ranking, entonces de menor a mayor
@@ -194,12 +161,6 @@ for( ksemilla in ksemillas )
 
     nom_submit  <- paste0( PARAM$experimento, 
                            "_",
-                           sprintf( "%02d", PARAM$modelo ),
-                           "_",
-                           sprintf( "%03d", iteracion_bayesiana ),
-                           "_",
-                           sprintf( "%05d", corte ),
-                           "_",
                            sprintf("%d", ksemilla),
                            ".csv" )
 
@@ -210,15 +171,8 @@ for( ksemilla in ksemillas )
     nom_submit_semillero <- paste0(
         PARAM$experimento,
         "_",
-        sprintf("%02d", i),
-        "_",
-        sprintf("%03d", iteracion_bayesiana),
-        "_",
-        sprintf("%05d", corte),
-        "_",
         sprintf("%d", ksemilla),
-        "_semillerio",
-        ".csv"
+        "_semillerio.csv"
     )
 
     fwrite(tb_prediccion_semillerio[, list(numero_de_cliente, Predicted)],
@@ -230,7 +184,6 @@ for( ksemilla in ksemillas )
 
   #borro y limpio la memoria para la vuelta siguiente del for
   rm( tb_prediccion )
-  #rm( tb_importancia )
   rm( modelo_final)
   rm( parametros )
   rm( dtrain )
