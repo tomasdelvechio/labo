@@ -76,7 +76,7 @@ tb_semillerio_rank <- dfuture[, list(numero_de_cliente, foto_mes)]
 write.csv(ksemillas, file = "ksemillas.csv", row.names = FALSE)
 
 #genero un modelo para cada uno de las modelos_qty MEJORES iteraciones de la Bayesian Optimization
-for( ksemilla in  PARAM$ksemillas )
+for( ksemilla in ksemillas )
 {
   parametros <- as.list(copy(tb_log[PARAM$modelo]))
   iteracion_bayesiana  <- parametros$iteracion_bayesiana
