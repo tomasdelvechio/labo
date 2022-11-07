@@ -60,8 +60,20 @@ campos_buenos <- c("ctrx_quarter_normalizado", "ctrx_quarter", "ctrx_quarter_lag
   "mcuentas_saldo_rank", "ctrx_quarter_normalizado_lag2", "mcaja_ahorro_rank",
   "mpayroll_sobre_edad_rank", "ctrx_quarter_normalizado_lag1", "cpayroll_trx",
   "mprestamos_personales_rank", "mtarjeta_visa_consumo_rank", "mpayroll_rank",
-  "mpasivos_margen_rank", "ctrx_quarter_lag2", "ctrx_quarter_normalizado_avg6" )
-
+  "mpasivos_margen_rank", "ctrx_quarter_lag2", "ctrx_quarter_normalizado_avg6",
+  "cliente_vip", "internet", "cliente_edad", "cliente_antiguedad", "mrentabilidad",
+  "mrentabilidad_annual", "mcomisiones", "mactivos_margen", "mpasivos_margen",
+  "cproductos", "tcuentas", "ccuenta_corriente", "mcuenta_corriente_adicional",
+  "mcuenta_corriente", "ccaja_ahorro", "mcaja_ahorro", "mcaja_ahorro_adicional",
+  "mcaja_ahorro_dolares", "cdescubierto_preacordado", "mcuentas_saldo", "ctarjeta_debito",
+  "ctarjeta_debito_transacciones", "mautoservicio", "ctarjeta_visa",
+  "ctarjeta_visa_transacciones", "mtarjeta_visa_consumo", "ctarjeta_master",
+  "ctarjeta_master_transacciones", "mtarjeta_master_consumo", "cprestamos_personales",
+  "mprestamos_personales", "cprestamos_prendarios", "mprestamos_prendarios",
+  "cprestamos_hipotecarios", "mprestamos_hipotecarios", "cplazo_fijo",
+  "mplazo_fijo_dolares", "mplazo_fijo_pesos", "cinversion1", "minversion1_pesos",
+  "minversion1_dolares", "cinversion2", "minversion2")
+  
 #Ahora, a esperar mucho con este algoritmo del pasado que NO correr en paralelo, patetico
 modelo  <- randomForest( x= dataset[  , campos_buenos, with=FALSE ], 
                          y= NULL, 
