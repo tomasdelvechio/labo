@@ -19,6 +19,7 @@ require("ranger")
 #Parametros del script
 PARAM <- list()
 PARAM$experimento  <- "CLU1262"
+PARAM$exp_input <- "FE9250_exp2" # Uso mi mejor Dataset de la C3
 # FIN Parametros del script
 
 #------------------------------------------------------------------------------
@@ -26,9 +27,9 @@ PARAM$experimento  <- "CLU1262"
 
 setwd( "~/buckets/b1/" )  #cambiar por la carpeta local
 
-#leo el dataset original
-# pero podria leer cualquiera que tenga Feature Engineering
-dataset  <- fread( "./datasets/competencia3_2022.csv.gz", stringsAsFactors= TRUE)
+# cargo el dataset donde voy a entrenar
+dataset_input <- paste0("./exp/", PARAM$exp_input, "/dataset.csv.gz")
+dataset <- fread(dataset_input)
 
 #creo la carpeta donde va el experimento
 dir.create( paste0( "./exp/", PARAM$experimento, "/"), showWarnings = FALSE )
@@ -52,20 +53,13 @@ gc()
 #quito los nulos para que se pueda ejecutar randomForest,  Dios que algoritmo prehistorico ...
 dataset  <- na.roughfix( dataset )
 
-
-#los campos que arbitrariamente decido considerar para el clustering
-#por supuesto, se pueden cambiar
-campos_buenos  <- c( "ctrx_quarter", "cpayroll_trx", "mcaja_ahorro", "mtarjeta_visa_consumo", "ctarjeta_visa_transacciones",
-                     "mcuentas_saldo", "mrentabilidad_annual", "mprestamos_personales", "mactivos_margen", "mpayroll",
-                     "Visa_mpagominimo", "Master_fechaalta", "cliente_edad", "chomebanking_transacciones", "Visa_msaldopesos",
-                     "Visa_Fvencimiento", "mrentabilidad", "Visa_msaldototal", "Master_Fvencimiento", "mcuenta_corriente",
-                     "Visa_mpagospesos", "Visa_fechaalta", "mcomisiones_mantenimiento", "Visa_mfinanciacion_limite",
-                     "mtransferencias_recibidas", "cliente_antiguedad", "Visa_mconsumospesos", "Master_mfinanciacion_limite",
-                     "mcaja_ahorro_dolares", "cproductos", "mcomisiones_otras", "thomebanking", "mcuenta_debitos_automaticos",
-                     "mcomisiones", "Visa_cconsumos", "ccomisiones_otras", "Master_status", "mtransferencias_emitidas",
-                     "mpagomiscuentas")
-
-
+# Los campos a tener en cuenta seran los 15 con mejor Feature Importance de mi
+#   mejor experimento privado en la competencia 3
+campos_buenos <- c("ctrx_quarter_normalizado", "ctrx_quarter", "ctrx_quarter_lag1",
+  "mcuentas_saldo_rank", "ctrx_quarter_normalizado_lag2", "mcaja_ahorro_rank",
+  "mpayroll_sobre_edad_rank", "ctrx_quarter_normalizado_lag1", "cpayroll_trx",
+  "mprestamos_personales_rank", "mtarjeta_visa_consumo_rank", "mpayroll_rank",
+  "mpasivos_margen_rank", "ctrx_quarter_lag2", "ctrx_quarter_normalizado_avg6" )
 
 #Ahora, a esperar mucho con este algoritmo del pasado que NO correr en paralelo, patetico
 modelo  <- randomForest( x= dataset[  , campos_buenos, with=FALSE ], 
@@ -91,7 +85,8 @@ dev.off()
 h <- 20
 distintos <- 0
 
-while(  h>0  &  !( distintos >=6 & distintos <=7 ) )
+# Quiero entre 3 y 4 clusters
+while(  h>0  &  !( distintos >=3 & distintos <=4 ) )
 {
   h <- h - 1 
   rf.cluster  <- cutree( hclust.rf, h)
