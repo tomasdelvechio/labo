@@ -51,7 +51,8 @@ gc()
 
 
 #quito los nulos para que se pueda ejecutar randomForest,  Dios que algoritmo prehistorico ...
-dataset  <- na.roughfix( dataset )
+dataset  <- na.roughfix( dataset[, clase_ternaria := NULL] )
+dataset <- cbind(dataset, dataset12$clase_ternaria)
 
 # Los campos a tener en cuenta seran los 15 con mejor Feature Importance de mi
 #   mejor experimento privado en la competencia 3
@@ -114,10 +115,10 @@ fwrite( dataset,
 #  y ver cuales son las que mas diferencian a los clusters
 #esta parte conviene hacerla desde la PC local, sobre  cluster_de_bajas.txt
 
-dataset[  , mean(ctrx_quarter),  cluster2 ]  #media de la variable  ctrx_quarter
-dataset[  , mean(mtarjeta_visa_consumo),  cluster2 ]
-dataset[  , mean(mcuentas_saldo),  cluster2 ]
-dataset[  , mean(chomebanking_transacciones),  cluster2 ]
+#dataset[  , mean(ctrx_quarter),  cluster2 ]  #media de la variable  ctrx_quarter
+#dataset[  , mean(mtarjeta_visa_consumo),  cluster2 ]
+#dataset[  , mean(mcuentas_saldo),  cluster2 ]
+#dataset[  , mean(chomebanking_transacciones),  cluster2 ]
 
 
 #Finalmente grabo el archivo para  Juan Pablo Cadaveira
