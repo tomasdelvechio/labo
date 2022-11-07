@@ -95,7 +95,7 @@ for( ksemilla in ksemillas )
   )
 
   # Salteo las semillas ya procesadas
-  if (!file.exists(nom_submit) || !file.exists(nom_submit_semillero)) {
+  if (file.exists(nom_submit) && file.exists(nom_submit_semillero)) {
     next # si, podría ser mas sofisticado, pero queda para el refactor
   }
 
