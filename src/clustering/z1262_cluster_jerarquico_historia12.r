@@ -49,6 +49,10 @@ dataset12[  , pos := seq(.N) , numero_de_cliente ]
 dataset12  <- dataset12[  pos <= 12 , ]
 gc()
 
+# Necesito algunas variables tradicionales que borró el FE
+dataset_original <- fread("~/buckets/b1/datasets/competencia3_2022.csv.gz")
+dataset <- dataset[dataset_original, on = .(numero_de_cliente = numero_de_cliente)]
+
 
 #quito los nulos para que se pueda ejecutar randomForest,  Dios que algoritmo prehistorico ...
 dataset  <- na.roughfix( dataset[, clase_ternaria := NULL] )
