@@ -18,7 +18,7 @@ require("ranger")
 
 #Parametros del script
 PARAM <- list()
-PARAM$experimento  <- "CLU1262_v1"
+PARAM$experimento  <- "CLU1262_v2"
 PARAM$exp_input <- "FE9250_exp2" # Uso mi mejor Dataset de la C3
 # FIN Parametros del script
 
