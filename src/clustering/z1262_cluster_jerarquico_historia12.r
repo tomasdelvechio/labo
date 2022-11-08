@@ -59,7 +59,16 @@ dataset  <- na.roughfix( dataset[, clase_ternaria := NULL] )
 dataset <- cbind(dataset, dataset12$clase_ternaria)
 
 # Los campos a tener en cuenta para la clusterización
-campos_buenos <- c("mrentabilidad", "mcomisiones", "cinversion1", "cinversion2")
+campos_buenos <- c(
+  "ctrx_quarter",
+  "mpayroll",
+  "internet",
+  "cproductos",
+  "mrentabilidad",
+  "mcomisiones",
+  "cinversion1",
+  "cinversion2"
+)
 
 #Ahora, a esperar mucho con este algoritmo del pasado que NO correr en paralelo, patetico
 modelo  <- randomForest( x= dataset[  , campos_buenos, with=FALSE ], 
@@ -81,12 +90,11 @@ plot( hclust.rf )
 dev.off()
 
 
-#genero 7 clusters
+#genero 6 clusters
 h <- 20
 distintos <- 0
 
-# Quiero entre 3 y 4 clusters
-while(  h>0  &  !( distintos >=2 & distintos <=3 ) )
+while (h > 0  &&  !(distintos >= 5 && distintos <= 6))
 {
   h <- h - 1 
   rf.cluster  <- cutree( hclust.rf, h)
