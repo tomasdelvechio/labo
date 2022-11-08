@@ -18,8 +18,7 @@ require("ranger")
 
 #Parametros del script
 PARAM <- list()
-PARAM$experimento  <- "CLU1262_v3"
-PARAM$exp_input <- "FE9250_exp2" # Uso mi mejor Dataset de la C3
+PARAM$experimento  <- "CLU1262_v4"
 # FIN Parametros del script
 
 #------------------------------------------------------------------------------
@@ -28,7 +27,7 @@ PARAM$exp_input <- "FE9250_exp2" # Uso mi mejor Dataset de la C3
 setwd( "~/buckets/b1/" )  #cambiar por la carpeta local
 
 # cargo el dataset donde voy a entrenar
-dataset_input <- paste0("./exp/", PARAM$exp_input, "/dataset.csv.gz")
+dataset_input <- paste0("./datasets/competencia3_2022.csv.gz")
 dataset <- fread(dataset_input)
 
 #creo la carpeta donde va el experimento
@@ -48,11 +47,6 @@ dataset12[  , pos := seq(.N) , numero_de_cliente ]
 #me quedo solo con los 12 meses antes de morir
 dataset12  <- dataset12[  pos <= 12 , ]
 gc()
-
-# Necesito algunas variables tradicionales que borró el FE
-dataset_original <- fread("~/buckets/b1/datasets/competencia3_2022.csv.gz")
-dataset <- dataset[dataset_original, on = .(numero_de_cliente = numero_de_cliente)]
-
 
 #quito los nulos para que se pueda ejecutar randomForest,  Dios que algoritmo prehistorico ...
 dataset  <- na.roughfix( dataset[, clase_ternaria := NULL] )
