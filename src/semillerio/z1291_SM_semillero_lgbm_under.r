@@ -23,6 +23,8 @@ PARAM$exp_input <- "HT9410_semillerio"
 PARAM$modelo <- 1 # se usa el mejor de la OB, pero a futuro podria variar esto
 PARAM$semilla_primos <- 697157
 PARAM$semillerio <- 100 # ¿De cuanto será nuestro semillerio?
+PARAM$indice_inicio_semilla <- 1
+PARAM$indice_fin_semilla <- 10
 # FIN Parametros del script
 
 # genero un vector de una cantidad de PARAM$semillerio  de semillas,  buscando numeros primos al azar
@@ -70,13 +72,13 @@ dataset[ , clase01 := ifelse( clase_ternaria %in% c("BAJA+1","BAJA+2"), 1, 0 )  
 campos_buenos  <- setdiff( colnames(dataset), c( "clase_ternaria", "clase01") )
 
 #tb_semillerio_proba <- dfuture[, list(numero_de_cliente, foto_mes)]
-tb_semillerio_rank <- dfuture[, list(numero_de_cliente, foto_mes)]
+#tb_semillerio_rank <- dfuture[, list(numero_de_cliente, foto_mes)]
 
 # Guardo las semillas Y EL ORDEN en que son usadas
 write.csv(ksemillas, file = "ksemillas.csv", row.names = FALSE)
 
 #genero un modelo para cada uno de las modelos_qty MEJORES iteraciones de la Bayesian Optimization
-for( ksemilla in ksemillas )
+for( ksemilla in ksemillas[PARAM$indice_inicio_semilla:PARAM$indice_fin_semilla] )
 {
 
   # optimización: si los archivos ya existen, puedo hacer skip de esta semilla
@@ -87,15 +89,22 @@ for( ksemilla in ksemillas )
     ".csv"
   )
 
-  nom_submit_semillero <- paste0(
+  nom_submit_rank <- paste0(
     PARAM$experimento,
     "_",
     sprintf("%d", ksemilla),
-    "_semillerio.csv"
+    "_rank.csv"
+  )
+  
+  nom_resultados <- paste0(
+    PARAM$experimento,
+    "_",
+    sprintf("%d", ksemilla),
+    "_resultados.csv"
   )
 
   # Salteo las semillas ya procesadas
-  if (file.exists(nom_submit) && file.exists(nom_submit_semillero)) {
+  if (file.exists(nom_submit) && file.exists(nom_submit_rank) && file.exists(nom_resultados)) {
     next # si, podría ser mas sofisticado, pero queda para el refactor
   }
 
@@ -157,37 +166,41 @@ for( ksemilla in ksemillas )
   
   tb_prediccion  <- dfuture[  , list( numero_de_cliente, foto_mes ) ]
   tb_prediccion[ , prob := prediccion ]
+  #hago el rank de las probabilidades
+  tb_prediccion[, rank := frank(prob, ties.method="random")]
+  tb_prediccion_rank <- data.table(tb_prediccion[, list(numero_de_cliente, foto_mes, rank)])
+  colnames(tb_prediccion_rank) <- c("numero_de_cliente", "foto_mes", "prediccion")
 
-  # Rank de la predicción y se agrega al semillerio
-  tb_semillerio_rank[, paste0("rank_", ksemilla) := frank(tb_prediccion)]
-  # Esta es la predicción del semillerio para la semilla i-esima
-  tb_prediccion_semillerio <- data.table(tb_semillerio_rank[, list(numero_de_cliente)], rowMeans(tb_semillerio_rank[, c(-1)]))
-  colnames(tb_prediccion_semillerio) <- c("numero_de_cliente", "prediccion")
-
+  #guardo los resultados de la predicción, por cada registro su probabilidad y ranking
+  fwrite(tb_prediccion[, list(numero_de_cliente, foto_mes, prob, rank)],
+         file = nom_resultados,
+         sep = ","
+  )
+  
   #genero los archivos para Kaggle
   cortes  <- seq( from=  11000,
                   to=    11000,
                   by=        0 )
 
   setorder( tb_prediccion, -prob )
-  setorder(tb_prediccion_semillerio, prediccion) # Esto es un ranking, entonces de menor a mayor
+  setorder(tb_prediccion_rank, prediccion) # Esto es un ranking, entonces de menor a mayor
 
   for( corte in cortes )
   {
     tb_prediccion[  , Predicted := 0L ]
     tb_prediccion[ 1:corte, Predicted := 1L ]
 
-    tb_prediccion_semillerio[, Predicted := 0L]
-    tb_prediccion_semillerio[1:corte, Predicted := 1L]
+    tb_prediccion_rank[, Predicted := 0L]
+    tb_prediccion_rank[1:corte, Predicted := 1L]
 
     # Guardo el submit individual
     fwrite(  tb_prediccion[ , list( numero_de_cliente, Predicted ) ],
              file= nom_submit,
              sep= "," )
 
-    # Guardo el submit del semillerio
-    fwrite(tb_prediccion_semillerio[, list(numero_de_cliente, Predicted)],
-        file = nom_submit_semillero,
+    # Guardo el submit con rank
+    fwrite(tb_prediccion_rank[, list(numero_de_cliente, Predicted)],
+        file = nom_submit_rank,
         sep = ","
     )
 
