@@ -8,6 +8,8 @@ require("data.table")
 PARAM <- list()
 PARAM$experimento <- "ZZ1292_ganancias_semillerio"
 PARAM$exp_input <- "ZZ9410_semillerio"
+
+PARAM$corte <- 11000 # cantidad de envios
 # FIN Parametros del script
 
 options(error = function() {
@@ -23,8 +25,14 @@ dir.create(paste0(base_dir, "exp/", PARAM$experimento, "/"), showWarnings = FALS
 setwd(paste0(base_dir, "exp/", PARAM$experimento, "/")) # Establezco el Working Directory DEL EXPERIMENTO
 
 # Cargar las semillas usadas para levantar las ganancias en el orden que fueron calculadas
-arch_future <- paste0(base_dir, "exp/", PARAM$exp_input, "/ksemillas.csv")
-ksemillas <- read.csv(arch_future, header = TRUE)$x
+#arch_future <- paste0(base_dir, "exp/", PARAM$exp_input, "/ksemillas.csv")
+#ksemillas <- read.csv(arch_future, header = TRUE)$x
+
+path_experimento_semillerio <- paste0(base_dir, "exp/", PARAM$exp_input)
+archivos <- list.files(path = path_experimento_semillerio, pattern = "_resultados.csv")
+
+# Esto es MUY dependiente del formato del nombre de los experimentos, se puede romper muy facil
+ksemillas <- strtoi(sapply(strsplit(archivos, "_"), "[", 3))
 
 # Levantar dataset C4
 # leo el dataset a partir del cual voy a calcular las ganancias
@@ -36,36 +44,51 @@ rm(dataset)
 
 dataset_julio[, clase_real := ifelse(clase_ternaria == "BAJA+2", 1, 0)]
 # Nos quedamos con las 2 columnas que nos resultan relevantes
-dataset_julio <- dataset_julio[, .("numero_de_cliente", "clase_real")]
+dataset_julio <- dataset_julio[, .(numero_de_cliente, clase_real)]
 
 calcularGanancia <- function(real, predicho) {
     tb_comparacion <- merge(real, predicho)
     # Estoy seguro que tiene que existir una forma menos horrible de escribir la siguiente expresión
-    return (tb_comparacion[, sum(ifelse(real == 1 & predicho == 1, 78000, ifelse(real == 0 & predicho == 1, -2000, 0)))])
+    return (tb_comparacion[, sum(ifelse(clase_real == 1 & Predicted == 1, 78000, ifelse(clase_real == 0 & Predicted == 1, -2000, 0)))])
 }
 
-tb_ganancias <- data.table(ksemillas)
+tb_ganancias <- data.table(semillas = ksemillas)
 tb_ganancias[, individual := 0]
 tb_ganancias[, semillerio := 0]
 
+# Tabla que contendrá los rankings de todos los clientes para todas las semillas
+tb_ranking_semillerio <- data.table(numero_de_cliente = dataset_julio[, numero_de_cliente])
+
 pdf("semillerio_vs_individuales.pdf")
 
-for (ksemilla in ksemillas) {
-    arch_prediccion_individual <- paste0(
-        base_dir, "exp/", PARAM$exp_input, "/", PARAM$exp_input, "_", sprintf("%d", ksemilla), ".csv"
+for (archivo in archivos) {
+
+    ksemilla <- strtoi(sapply(strsplit(archivo, "_"), "[", 3))
+
+    # cols: numero_de_cliente,foto_mes,prob,rank
+    tb_prediccion <- fread(paste0(path_experimento_semillerio, '/', archivo))
+    # repara bug en z1292, si se fixea ahi, esto no genera problemas
+    tb_prediccion[, rank := frank(-prob, ties.method = "random")]
+
+    # Generamos predicción individual
+    setorder(tb_prediccion, -prob)
+    tb_prediccion[, Predicted := 0]
+    tb_prediccion[1:PARAM$corte, Predicted := 1L]
+
+    # Generamos predicción del semillerio
+    tb_ranking_semillerio[, paste0("rank_", ksemilla) := tb_prediccion$rank]
+
+    # Esta es la predicción del semillerio para la semilla i-esima
+    tb_prediccion_semillerio <- data.table(
+        tb_ranking_semillerio[, list(numero_de_cliente)],
+        prediccion = rowMeans(tb_ranking_semillerio[, c(-1)]) # excluye el numero_de_cliente del cálculo de la media
     )
-    tb_prediccion_individual <- fread(arch_prediccion_individual)
+    setorder(tb_prediccion_semillerio, prediccion) # Esto es un ranking, entonces de menor a mayor
+    tb_prediccion_semillerio[, Predicted := 0]
+    tb_prediccion_semillerio[1:PARAM$corte, Predicted := 1L]
 
-    arch_prediccion_semillerio <- paste0(
-        base_dir, "exp/", PARAM$exp_input, "/", PARAM$exp_input, "_", sprintf("%d", ksemilla), "_semillerio.csv"
-    )
-    tb_prediccion_semillerio <- fread(arch_prediccion_semillerio)
-
-    ganancia_individual <- calcularGanancia(dataset_julio, tb_prediccion_individual)
-    ganancia_semillerio <- calcularGanancia(dataset_julio, arch_prediccion_semillerio)
-
-    tb_ganancias["semilla" == ksemilla]$individual <- calcularGanancia(dataset_julio, tb_prediccion_individual)
-    tb_ganancias["semilla" == ksemilla]$semillerio <- calcularGanancia(dataset_julio, tb_prediccion_individual)
+    tb_ganancias[semillas == ksemilla]$individual <- calcularGanancia(dataset_julio, tb_prediccion)
+    tb_ganancias[semillas == ksemilla]$semillerio <- calcularGanancia(dataset_julio, tb_prediccion_semillerio)
 
 }
 
