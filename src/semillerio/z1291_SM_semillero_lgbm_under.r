@@ -167,7 +167,7 @@ for( ksemilla in ksemillas[PARAM$indice_inicio_semilla:PARAM$indice_fin_semilla]
   tb_prediccion  <- dfuture[  , list( numero_de_cliente, foto_mes ) ]
   tb_prediccion[ , prob := prediccion ]
   #hago el rank de las probabilidades
-  tb_prediccion[, rank := frank(prob, ties.method="random")]
+  tb_prediccion[, rank := frank(-prob, ties.method = "random")]
   tb_prediccion_rank <- data.table(tb_prediccion[, list(numero_de_cliente, foto_mes, rank)])
   colnames(tb_prediccion_rank) <- c("numero_de_cliente", "foto_mes", "prediccion")
 
