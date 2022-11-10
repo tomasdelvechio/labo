@@ -59,8 +59,6 @@ tb_ganancias[, semillerio := 0]
 # Tabla que contendrá los rankings de todos los clientes para todas las semillas
 tb_ranking_semillerio <- data.table(numero_de_cliente = dataset_julio[, numero_de_cliente])
 
-pdf("semillerio_vs_individuales.pdf")
-
 for (archivo in archivos) {
 
     ksemilla <- strtoi(sapply(strsplit(archivo, "_"), "[", 3))
@@ -70,13 +68,13 @@ for (archivo in archivos) {
     # repara bug en z1292, si se fixea ahi, esto no genera problemas
     tb_prediccion[, rank := frank(-prob, ties.method = "random")]
 
+    # Generamos predicción del semillerio
+    tb_ranking_semillerio[, paste0("rank_", ksemilla) := tb_prediccion$rank]
+
     # Generamos predicción individual
     setorder(tb_prediccion, -prob)
     tb_prediccion[, Predicted := 0]
     tb_prediccion[1:PARAM$corte, Predicted := 1L]
-
-    # Generamos predicción del semillerio
-    tb_ranking_semillerio[, paste0("rank_", ksemilla) := tb_prediccion$rank]
 
     # Esta es la predicción del semillerio para la semilla i-esima
     tb_prediccion_semillerio <- data.table(
@@ -92,9 +90,11 @@ for (archivo in archivos) {
 
 }
 
-plot(tb_ganancias$semilla, tb_ganancias$semillerio, type = "l", col = "red")
-points(tb_ganancias$semilla, tb_ganancias$individual, col = "blue")
-lines(mean(tb_ganancias$individual), color = "green")
-
-
+pdf("semillerio_vs_individuales.pdf")
+secuencia <- seq(from = 1, to = length(tb_ganancias$semilla))
+yminimo <- min(tb_ganancias$individual) - 0.005 * min(tb_ganancias$individual)
+ymaximo <- max(tb_ganancias$individual) + 0.005 * max(tb_ganancias$individual)
+plot(secuencia, tb_ganancias$semillerio, type = "l", col = "red", ylim = c(yminimo, ymaximo))
+points(secuencia, tb_ganancias$individual, col = "blue")
+abline(h=mean(tb_ganancias$individual), col = "green")
 dev.off()
