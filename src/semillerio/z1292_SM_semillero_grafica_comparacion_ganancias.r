@@ -94,7 +94,20 @@ pdf("semillerio_vs_individuales.pdf")
 secuencia <- seq(from = 1, to = length(tb_ganancias$semilla))
 yminimo <- min(tb_ganancias$individual) - 0.005 * min(tb_ganancias$individual)
 ymaximo <- max(tb_ganancias$individual) + 0.005 * max(tb_ganancias$individual)
-plot(secuencia, tb_ganancias$semillerio, type = "l", col = "red", ylim = c(yminimo, ymaximo))
+plot(secuencia, tb_ganancias$semillerio,
+    type = "l",
+    col = "red",
+    ylim = c(yminimo, ymaximo),
+    xlab = "Semillas",
+    ylab = "Ganancia total Julio 2021",
+    main = "Experimento Semillerio - 11000 envios"
+)
 points(secuencia, tb_ganancias$individual, col = "blue")
 abline(h=mean(tb_ganancias$individual), col = "green")
+legend("bottomleft",
+    inset = .05,
+    c("Ensemble Semillerio", "Semillas sueltas", "Media semillas sueltas"),
+    fill = c("red", "blue", "green"),
+    horiz = FALSE
+)
 dev.off()
