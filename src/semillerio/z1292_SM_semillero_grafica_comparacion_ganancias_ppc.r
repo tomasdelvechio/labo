@@ -6,12 +6,12 @@ require("data.table")
 
 # Parametros del script
 PARAM <- list()
-PARAM$experimento <- "ZZ1292_ganancias_semillerio_pc"
+PARAM$experimento <- "ZZ1292_ganancias_semillerio_ppc_50"
 PARAM$exp_input <- "ZZ9410_semillerio"
 
 #PARAM$corte <- 11000 # cantidad de envios
-PARAM$cortes  <- seq( from=  9500,
-                      to=    11500,
+PARAM$cortes  <- seq( from=  9000,
+                      to=    12000,
                       by=        500 )
 # FIN Parametros del script
 
@@ -118,11 +118,15 @@ for (corte in PARAM$cortes)
        main = paste0("Experimento Semillerio - ",sprintf("%d", corte)," envio")
   )
   points(secuencia, tb_ganancias[, get(nom_corte_ind)], col = "blue")
-  abline(h=mean(tb_ganancias[, get(nom_corte_ind)]), col = "green")
+  mean_gan_ind = as.integer(mean(tb_ganancias[, get(nom_corte_ind)]))
+  abline(h=mean_gan_ind, col = "green")
+  last_gan_sem = tb_ganancias[length(ksemillas), get(nom_corte_sem)]
   legend("bottomleft",
          inset = .05,
-         c("Ensemble Semillerio", "Semillas sueltas", "Media semillas sueltas"),
-         fill = c("red", "blue", "green"),
+         c(paste0("Ensemble Semillerio: ", sprintf("%d", last_gan_sem)), 
+           paste0("Media semillas sueltas: ", sprintf("%d", mean_gan_ind)),
+           "Semillas sueltas"),
+         fill = c("red", "green", "blue"),
          horiz = FALSE
   )
 }
