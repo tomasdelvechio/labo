@@ -109,11 +109,10 @@ for (archivo in archivos) {
         tb_ranking_semillerio[, list(numero_de_cliente)],
         prediccion = rowMeans(tb_ranking_semillerio[, c(-1)]) # excluye el numero_de_cliente del cálculo de la media
     )
+    tb_prediccion_semillerio_acumulado[, paste0("prediccion_acc_", ksemilla) := tb_prediccion_semillerio$prediccion]
     setorder(tb_prediccion_semillerio, prediccion) # Esto es un ranking, entonces de menor a mayor
     tb_prediccion_semillerio[, Predicted := 0]
     tb_prediccion_semillerio[1:PARAM$corte, Predicted := 1L]
-
-    tb_prediccion_semillerio_acumulado[, paste0("prediccion_acc_", ksemilla) := tb_prediccion$rank]
 
     tb_ganancias[semillas == ksemilla]$individual <- calcularGanancia(dataset_julio, tb_prediccion)
     tb_ganancias[semillas == ksemilla]$semillerio <- calcularGanancia(dataset_julio, tb_prediccion_semillerio)
