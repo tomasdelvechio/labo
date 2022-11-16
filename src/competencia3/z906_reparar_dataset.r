@@ -12,9 +12,11 @@ require("data.table")
 
 #Parametros del script
 PARAM  <- list()
-PARAM$experimento  <- "CA9060_miranda"
-PARAM$dataset  <- "./datasets/competencia3_2022.csv.gz"
 
+PARAM$experimento  <- "CA9060_semillerio"
+# Para el experimento se parte de este dataset, y luego con las predicciones vamos a calcular ganancia con el dataset 4
+# Si el semillero se va a usar en C4, deberia cambiarse esta línea
+PARAM$dataset <- "./datasets/competencia3_2022.csv.gz"
 PARAM$metodo <- "EstadisticaClasica" # valores posibles  "MachineLearning"  "EstadisticaClasica"
 # FIN Parametros del script
 
