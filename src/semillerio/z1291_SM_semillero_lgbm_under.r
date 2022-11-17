@@ -81,9 +81,6 @@ dataset[ , clase01 := ifelse( clase_ternaria %in% c("BAJA+1","BAJA+2"), 1, 0 )  
 
 campos_buenos  <- setdiff( colnames(dataset), c( "clase_ternaria", "clase01") )
 
-#tb_semillerio_proba <- dfuture[, list(numero_de_cliente, foto_mes)]
-#tb_semillerio_rank <- dfuture[, list(numero_de_cliente, foto_mes)]
-
 # Guardo las semillas Y EL ORDEN en que son usadas
 write.csv(ksemillas, file = "ksemillas.csv", row.names = FALSE)
 
