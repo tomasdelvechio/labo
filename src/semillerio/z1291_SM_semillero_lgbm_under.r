@@ -29,6 +29,15 @@ PARAM$indice_fin_semilla <- 10
 
 # genero un vector de una cantidad de PARAM$semillerio  de semillas,  buscando numeros primos al azar
 primos <- generate_primes(min = 100000, max = 1000000) # genero TODOS los numeros primos entre 100k y 1M
+if (length(primos) < PARAM$semillerio) {
+  # La cantidad de primos requerida es menor a los existentes en el rango
+  # Le generamos el doble de la cantidad de quiere, es sub optimo pero
+  # no interrumpe el script
+  cat("La cantidad de primos solicitada es menor a la existente en el rango pedido!\n")
+  cat("Se generan primos en otro rango para salvar la situación\n\n")
+  primos <- generate_n_primes(PARAM$semillerio * 2)
+}
+
 set.seed(PARAM$semilla_primos) # seteo la semilla que controla al sample de los primos
 ksemillas <- sample(primos)[1:PARAM$semillerio] # me quedo con  PARAM$semillerio primos al azar
 
