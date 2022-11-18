@@ -80,9 +80,6 @@ dataset[ , clase01 := ifelse( clase_ternaria %in% c("BAJA+1","BAJA+2"), 1, 0 )  
 
 campos_buenos  <- setdiff( colnames(dataset), c( "clase_ternaria", "clase01") )
 
-#tb_semillerio_proba <- dfuture[, list(numero_de_cliente, foto_mes)]
-#tb_semillerio_rank <- dfuture[, list(numero_de_cliente, foto_mes)]
-
 # Guardo las semillas Y EL ORDEN en que son usadas
 write.csv(ksemillas, file = "ksemillas.csv", row.names = FALSE)
 
@@ -185,35 +182,6 @@ for( ksemilla in ksemillas[PARAM$indice_inicio_semilla:PARAM$indice_fin_semilla]
          file = nom_resultados,
          sep = ","
   )
-  
-  #genero los archivos para Kaggle
-  cortes  <- seq( from=  11000,
-                  to=    11000,
-                  by=        0 )
-
-  setorder( tb_prediccion, -prob )
-  setorder(tb_prediccion_rank, prediccion) # Esto es un ranking, entonces de menor a mayor
-
-  for( corte in cortes )
-  {
-    tb_prediccion[  , Predicted := 0L ]
-    tb_prediccion[ 1:corte, Predicted := 1L ]
-
-    tb_prediccion_rank[, Predicted := 0L]
-    tb_prediccion_rank[1:corte, Predicted := 1L]
-
-    # Guardo el submit individual
-    fwrite(  tb_prediccion[ , list( numero_de_cliente, Predicted ) ],
-             file= nom_submit,
-             sep= "," )
-
-    # Guardo el submit con rank
-    fwrite(tb_prediccion_rank[, list(numero_de_cliente, Predicted)],
-        file = nom_submit_rank,
-        sep = ","
-    )
-
-  }
 
   #borro y limpio la memoria para la vuelta siguiente del for
   rm( tb_prediccion )
