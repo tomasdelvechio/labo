@@ -19,14 +19,14 @@ require("lightgbm")
 
 #Parametros del script
 PARAM  <- list()
+PARAM$experimento <- "FE9250_C4_exp1"
 
-PARAM$experimento <- "FE9250_semillerio"
-PARAM$exp_input <- "DR9141_semillerio"
+PARAM$exp_input <- "DR9141_C4_exp1"
 
 PARAM$lag1  <- TRUE
 PARAM$lag2  <- TRUE
 PARAM$Tendencias  <- TRUE
-PARAM$RandomForest  <- FALSE          #No se puede poner en TRUE para la entrega oficial de la Tercera Competencia
+PARAM$RandomForest  <- TRUE          #No se puede poner en TRUE para la entrega oficial de la Tercera Competencia
 PARAM$CanaritosAsesinos  <- FALSE
 # FIN Parametros del script
 
@@ -372,13 +372,13 @@ if( PARAM$Tendencias )
 {
   TendenciaYmuchomas( dataset, 
                       cols= cols_lagueables,
-                      ventana=   3,      # 6 meses de historia
+                      ventana=   6,      # 6 meses de historia
                       tendencia= TRUE,
-                      minimo=    FALSE,
-                      maximo=    FALSE,
+                      minimo=    TRUE,
+                      maximo=    TRUE,
                       promedio=  TRUE,
-                      ratioavg=  FALSE,
-                      ratiomax=  FALSE  )
+                      ratioavg=  TRUE,
+                      ratiomax=  TRUE  )
 }
 
 #------------------------------------------------------------------------------

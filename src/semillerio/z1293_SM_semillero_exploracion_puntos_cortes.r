@@ -68,6 +68,9 @@ for (archivo in archivos) {
   
   # cols: numero_de_cliente,foto_mes,prob,rank
   tb_prediccion <- fread(paste0(path_experimento_semillerio, '/', archivo))
+  setorder(tb_prediccion, numero_de_cliente)
+  setorder(tb_ranking_semillerio, numero_de_cliente)
+
   # repara bug en z1292, si se fixea ahi, esto no genera problemas
   tb_prediccion[, rank := frank(-prob, ties.method = "random")]
   

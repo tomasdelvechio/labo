@@ -18,7 +18,7 @@ require("ranger")
 
 #Parametros del script
 PARAM <- list()
-PARAM$experimento  <- "CLU1262"
+PARAM$experimento  <- "CLU1262_v4"
 # FIN Parametros del script
 
 #------------------------------------------------------------------------------
@@ -26,9 +26,9 @@ PARAM$experimento  <- "CLU1262"
 
 setwd( "~/buckets/b1/" )  #cambiar por la carpeta local
 
-#leo el dataset original
-# pero podria leer cualquiera que tenga Feature Engineering
-dataset  <- fread( "./datasets/competencia3_2022.csv.gz", stringsAsFactors= TRUE)
+# cargo el dataset donde voy a entrenar
+dataset_input <- paste0("./datasets/competencia3_2022.csv.gz")
+dataset <- fread(dataset_input)
 
 #creo la carpeta donde va el experimento
 dir.create( paste0( "./exp/", PARAM$experimento, "/"), showWarnings = FALSE )
@@ -48,24 +48,21 @@ dataset12[  , pos := seq(.N) , numero_de_cliente ]
 dataset12  <- dataset12[  pos <= 12 , ]
 gc()
 
-
 #quito los nulos para que se pueda ejecutar randomForest,  Dios que algoritmo prehistorico ...
-dataset  <- na.roughfix( dataset )
+dataset  <- na.roughfix( dataset[, clase_ternaria := NULL] )
+dataset <- cbind(dataset, dataset12$clase_ternaria)
 
-
-#los campos que arbitrariamente decido considerar para el clustering
-#por supuesto, se pueden cambiar
-campos_buenos  <- c( "ctrx_quarter", "cpayroll_trx", "mcaja_ahorro", "mtarjeta_visa_consumo", "ctarjeta_visa_transacciones",
-                     "mcuentas_saldo", "mrentabilidad_annual", "mprestamos_personales", "mactivos_margen", "mpayroll",
-                     "Visa_mpagominimo", "Master_fechaalta", "cliente_edad", "chomebanking_transacciones", "Visa_msaldopesos",
-                     "Visa_Fvencimiento", "mrentabilidad", "Visa_msaldototal", "Master_Fvencimiento", "mcuenta_corriente",
-                     "Visa_mpagospesos", "Visa_fechaalta", "mcomisiones_mantenimiento", "Visa_mfinanciacion_limite",
-                     "mtransferencias_recibidas", "cliente_antiguedad", "Visa_mconsumospesos", "Master_mfinanciacion_limite",
-                     "mcaja_ahorro_dolares", "cproductos", "mcomisiones_otras", "thomebanking", "mcuenta_debitos_automaticos",
-                     "mcomisiones", "Visa_cconsumos", "ccomisiones_otras", "Master_status", "mtransferencias_emitidas",
-                     "mpagomiscuentas")
-
-
+# Los campos a tener en cuenta para la clusterización
+campos_buenos <- c(
+  "ctrx_quarter",
+  "mpayroll",
+  "internet",
+  "cproductos",
+  "mrentabilidad",
+  "mcomisiones",
+  "cinversion1",
+  "cinversion2"
+)
 
 #Ahora, a esperar mucho con este algoritmo del pasado que NO correr en paralelo, patetico
 modelo  <- randomForest( x= dataset[  , campos_buenos, with=FALSE ], 
@@ -87,11 +84,11 @@ plot( hclust.rf )
 dev.off()
 
 
-#genero 7 clusters
+#genero 6 clusters
 h <- 20
 distintos <- 0
 
-while(  h>0  &  !( distintos >=6 & distintos <=7 ) )
+while (h > 0  &&  !(distintos >= 5 && distintos <= 6))
 {
   h <- h - 1 
   rf.cluster  <- cutree( hclust.rf, h)
@@ -119,10 +116,10 @@ fwrite( dataset,
 #  y ver cuales son las que mas diferencian a los clusters
 #esta parte conviene hacerla desde la PC local, sobre  cluster_de_bajas.txt
 
-dataset[  , mean(ctrx_quarter),  cluster2 ]  #media de la variable  ctrx_quarter
-dataset[  , mean(mtarjeta_visa_consumo),  cluster2 ]
-dataset[  , mean(mcuentas_saldo),  cluster2 ]
-dataset[  , mean(chomebanking_transacciones),  cluster2 ]
+#dataset[  , mean(ctrx_quarter),  cluster2 ]  #media de la variable  ctrx_quarter
+#dataset[  , mean(mtarjeta_visa_consumo),  cluster2 ]
+#dataset[  , mean(mcuentas_saldo),  cluster2 ]
+#dataset[  , mean(chomebanking_transacciones),  cluster2 ]
 
 
 #Finalmente grabo el archivo para  Juan Pablo Cadaveira

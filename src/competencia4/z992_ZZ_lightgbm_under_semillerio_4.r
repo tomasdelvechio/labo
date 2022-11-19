@@ -16,28 +16,19 @@ require("primes")
 
 #Parametros del script
 PARAM <- list()
-PARAM$experimento <- "ZZ9410_semillerio"
-PARAM$exp_input <- "HT9410_semillerio"
+PARAM$experimento <- "ZZ9410_semillerio_ensamble"
+PARAM$exp_input <- "HT9420_C4_exp1"
 
 # PARAM$modelos  <- 2
 PARAM$modelo <- 1 # se usa el mejor de la OB, pero a futuro podria variar esto
 PARAM$semilla_primos <- 697157
 PARAM$semillerio <- 100 # ¿De cuanto será nuestro semillerio?
-PARAM$indice_inicio_semilla <- 1
-PARAM$indice_fin_semilla <- 10
+PARAM$indice_inicio_semilla <- 61
+PARAM$indice_fin_semilla <- 80
 # FIN Parametros del script
 
 # genero un vector de una cantidad de PARAM$semillerio  de semillas,  buscando numeros primos al azar
 primos <- generate_primes(min = 100000, max = 1000000) # genero TODOS los numeros primos entre 100k y 1M
-if (length(primos) < PARAM$semillerio) {
-  # La cantidad de primos requerida es menor a los existentes en el rango
-  # Le generamos el doble de la cantidad de quiere, es sub optimo pero
-  # no interrumpe el script
-  cat("La cantidad de primos solicitada es menor a la existente en el rango pedido!\n")
-  cat("Se generan primos en otro rango para salvar la situación\n\n")
-  primos <- generate_n_primes(PARAM$semillerio * 2)
-}
-
 set.seed(PARAM$semilla_primos) # seteo la semilla que controla al sample de los primos
 ksemillas <- sample(primos)[1:PARAM$semillerio] # me quedo con  PARAM$semillerio primos al azar
 
@@ -80,6 +71,9 @@ dataset[ , clase01 := ifelse( clase_ternaria %in% c("BAJA+1","BAJA+2"), 1, 0 )  
 
 campos_buenos  <- setdiff( colnames(dataset), c( "clase_ternaria", "clase01") )
 
+#tb_semillerio_proba <- dfuture[, list(numero_de_cliente, foto_mes)]
+#tb_semillerio_rank <- dfuture[, list(numero_de_cliente, foto_mes)]
+
 # Guardo las semillas Y EL ORDEN en que son usadas
 write.csv(ksemillas, file = "ksemillas.csv", row.names = FALSE)
 
@@ -104,6 +98,10 @@ for( ksemilla in ksemillas[PARAM$indice_inicio_semilla:PARAM$indice_fin_semilla]
   
   nom_resultados <- paste0(
     PARAM$experimento,
+    "_",
+    sprintf("M%d", PARAM$modelo),
+    "_",
+    sprintf("S%d_S%d", PARAM$indice_inicio_semilla, PARAM$indice_fin_semilla),
     "_",
     sprintf("%d", ksemilla),
     "_resultados.csv"
@@ -182,6 +180,35 @@ for( ksemilla in ksemillas[PARAM$indice_inicio_semilla:PARAM$indice_fin_semilla]
          file = nom_resultados,
          sep = ","
   )
+  
+  #genero los archivos para Kaggle
+  cortes  <- seq( from=  11000,
+                  to=    11000,
+                  by=        0 )
+
+  setorder( tb_prediccion, -prob )
+  setorder(tb_prediccion_rank, prediccion) # Esto es un ranking, entonces de menor a mayor
+
+  for( corte in cortes )
+  {
+    tb_prediccion[  , Predicted := 0L ]
+    tb_prediccion[ 1:corte, Predicted := 1L ]
+
+    tb_prediccion_rank[, Predicted := 0L]
+    tb_prediccion_rank[1:corte, Predicted := 1L]
+
+    # Guardo el submit individual
+    fwrite(  tb_prediccion[ , list( numero_de_cliente, Predicted ) ],
+             file= nom_submit,
+             sep= "," )
+
+    # Guardo el submit con rank
+    fwrite(tb_prediccion_rank[, list(numero_de_cliente, Predicted)],
+        file = nom_submit_rank,
+        sep = ","
+    )
+
+  }
 
   #borro y limpio la memoria para la vuelta siguiente del for
   rm( tb_prediccion )
