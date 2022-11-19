@@ -52,7 +52,6 @@ rm(dataset)
 
 # Tabla que contendrá los rankings de todos los clientes para todas las semillas
 tb_ranking_semillerio <- data.table(numero_de_cliente = dataset_septiembre[, numero_de_cliente])
-tb_semillerio_acumulado <- data.table(numero_de_cliente = dataset_septiembre[, numero_de_cliente])
 
 for (archivo in archivos) {
 
@@ -65,7 +64,6 @@ for (archivo in archivos) {
 
     # Generamos predicción del semillerio
     tb_ranking_semillerio[, paste0("rank_", ksemilla) := tb_prediccion$rank]
-    tb_semillerio_acumulado[, paste0("prediccion_ind_", ksemilla) := tb_prediccion$rank]
 
     # Generamos predicción individual
     setorder(tb_prediccion, rank)
@@ -91,14 +89,11 @@ for (archivo in archivos) {
         )
     }
 
-    predicciones <- tb_ranking_semillerio[, list(mean())]
-
     # Esta es la predicción del semillerio para la semilla i-esima
     tb_prediccion_semillerio <- data.table(
         tb_ranking_semillerio[, list(numero_de_cliente)],
         prediccion = rowMeans(tb_ranking_semillerio[, c(-1)]) # excluye el numero_de_cliente del cálculo de la media
     )
-    tb_semillerio_acumulado[, paste0("prediccion_acc_", ksemilla) := tb_prediccion_semillerio$prediccion]
     setorder(tb_prediccion_semillerio, prediccion) # Esto es un ranking, entonces de menor a mayor
     tb_prediccion_semillerio[, Predicted := 0]
     tb_prediccion_semillerio[1:PARAM$corte, Predicted := 1L]
