@@ -13,8 +13,8 @@ PARAM$exp_input <- "ZZ9410_semillerio_ensamble_m1"
 # Es posible que no se desee activar porque va a crear muchos csv que posiblemente no se utilicen
 PARAM$generar_salidas_individuales <- TRUE
 
-# Decide si para finalizar la predicción hace el ranking o se queda con las probabilidades
-PARAM$use_rank_final <- TRUE # EN ESTA VERSION ESTO NO ANDA EN FALSE, SIEMPRE USA RANKING, NECESITO UN PAR DE HORAS MAS DE TRABAJO
+# Decide si para finalizar la predicción usa el ranking o se queda con las probabilidades
+PARAM$use_rank_final <- TRUE
 
 # cantidad de envios
 PARAM$corte <- 11000
@@ -62,11 +62,21 @@ for (archivo in archivos) {
     setorder(tb_prediccion, numero_de_cliente)
     setorder(tb_ranking_semillerio, numero_de_cliente)
 
-    # Generamos predicción del semillerio
-    tb_ranking_semillerio[, paste0("rank_", ksemilla) := tb_prediccion$rank]
+    if (PARAM$use_rank_final) {
+        # Generamos predicción del semillerio en base al rank
+        tb_ranking_semillerio[, paste0("rank_", ksemilla) := tb_prediccion$rank]
 
-    # Generamos predicción individual
-    setorder(tb_prediccion, rank)
+        # Generamos predicción individual
+        setorder(tb_prediccion, rank)
+    } else {
+        # usamos la probabilidad, no el rank
+        # Generamos predicción del semillerio en base al rank
+        tb_ranking_semillerio[, paste0("rank_", ksemilla) := tb_prediccion$prob]
+
+        # Generamos predicción individual
+        setorder(tb_prediccion, prob)
+    }
+
     tb_prediccion[, Predicted := 0]
     tb_prediccion[1:PARAM$corte, Predicted := 1L]
     if (PARAM$generar_salidas_individuales) {
