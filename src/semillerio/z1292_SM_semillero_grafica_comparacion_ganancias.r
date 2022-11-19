@@ -102,7 +102,7 @@ for (archivo in archivos) {
     #tb_prediccion_semillerio_acumulado[, paste0("prediccion_acc_", ksemilla) := tb_prediccion$rank]
 
     # Generamos predicción individual
-    setorder(tb_prediccion, -prob)
+    setorder(tb_prediccion, rank)
     tb_prediccion[, Predicted := 0]
     tb_prediccion[1:PARAM$corte, Predicted := 1L]
 
