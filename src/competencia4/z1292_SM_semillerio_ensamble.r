@@ -7,7 +7,7 @@ require("data.table")
 # Parametros del script
 PARAM <- list()
 PARAM$experimento <- "ZZ1292_semillerio_kaggle_m1"
-PARAM$exp_input <- "ZZ9410_semillerio_ensamble"
+PARAM$exp_input <- "ZZ9410_semillerio_ensamble_m1"
 
 # Genera los csv de los experimentos de cada semilla
 # Es posible que no se desee activar porque va a crear muchos csv que posiblemente no se utilicen
