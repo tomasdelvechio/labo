@@ -214,7 +214,6 @@ for( ksemilla in ksemillas[PARAM$indice_inicio_semilla:PARAM$indice_fin_semilla]
   rm( tb_prediccion )
   rm( modelo_final)
   rm( parametros )
-  rm( dtrain )
   gc()
 }
 
