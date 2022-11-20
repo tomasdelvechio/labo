@@ -71,11 +71,18 @@ dataset[ , clase01 := ifelse( clase_ternaria %in% c("BAJA+1","BAJA+2"), 1, 0 )  
 
 campos_buenos  <- setdiff( colnames(dataset), c( "clase_ternaria", "clase01") )
 
-#tb_semillerio_proba <- dfuture[, list(numero_de_cliente, foto_mes)]
-#tb_semillerio_rank <- dfuture[, list(numero_de_cliente, foto_mes)]
-
 # Guardo las semillas Y EL ORDEN en que son usadas
 write.csv(ksemillas, file = "ksemillas.csv", row.names = FALSE)
+
+message("Creando dataset ")
+timestamp()
+dtrain <- lgb.Dataset(
+  data = data.matrix(dataset[, campos_buenos, with = FALSE]),
+  label = dataset[, clase01],
+  weight = dataset[, ifelse(clase_ternaria %in% c("BAJA+2"), 1.0000001, 1.0)],
+  free_raw_data = FALSE
+)
+timestamp()
 
 #genero un modelo para cada uno de las modelos_qty MEJORES iteraciones de la Bayesian Optimization
 for( ksemilla in ksemillas[PARAM$indice_inicio_semilla:PARAM$indice_fin_semilla] )
@@ -115,16 +122,6 @@ for( ksemilla in ksemillas[PARAM$indice_inicio_semilla:PARAM$indice_fin_semilla]
   message("procesando semilla ", ksemilla) # un poco de debug
   parametros <- as.list(copy(tb_log[PARAM$modelo]))
   iteracion_bayesiana  <- parametros$iteracion_bayesiana
-
-  message("Creando dataset ")
-  timestamp()
-  #creo CADA VEZ el dataset de lightgbm
-  dtrain  <- lgb.Dataset( data=    data.matrix( dataset[ , campos_buenos, with=FALSE] ),
-                          label=   dataset[ , clase01],
-                          weight=  dataset[ , ifelse( clase_ternaria %in% c("BAJA+2"), 1.0000001, 1.0)],
-                          free_raw_data= FALSE
-                        )
-  timestamp()
 
   #elimino los parametros que no son de lightgbm
   parametros$experimento  <- NULL
