@@ -55,7 +55,7 @@ tb_ranking_semillerio <- data.table(numero_de_cliente = dataset_septiembre[, num
 
 for (archivo in archivos) {
 
-    ksemilla <- strtoi(sapply(strsplit(archivo, "_"), "[", 3))
+    ksemilla <- strtoi(strsplit(archivo, "_")[[1]][7])
 
     # cols: numero_de_cliente,foto_mes,prob,rank
     tb_prediccion <- fread(paste0(path_experimento_semillerio, "/", archivo))
