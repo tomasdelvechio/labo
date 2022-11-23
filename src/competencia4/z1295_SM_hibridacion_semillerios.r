@@ -12,7 +12,8 @@ PARAM$experimento <- "ZZ1292_hibridacion_semillerio_kaggle_m1"
 # Estos archivos los genera el z1292 cuando tiene PARAM$generar_salida_hibridador <- TRUE
 PARAM$archivos <- c(
     "../ZZ1292_semillerio_kaggle_m1/ZZ1292_semillerio_kaggle_m1_rank_predicciones.csv",
-    "../ZZ1292_semillerio_kaggle_m2/ZZ1292_semillerio_kaggle_m2_rank_predicciones.csv"
+    "../ZZ1292_semillerio_kaggle_m2/ZZ1292_semillerio_kaggle_m2_rank_predicciones.csv",
+    "../ZZ1292_semillerio_kaggle_m3/ZZ1292_semillerio_kaggle_m3_rank_predicciones.csv"
 )
 
 PARAM$corte <- 10250 # cantidad de envios
@@ -33,10 +34,10 @@ setwd(paste0(base_dir, "exp/", PARAM$experimento, "/")) # Establezco el Working 
 cat("Semillerios involucrados en la hibridacion: ", length(PARAM$archivos), "\n")
 cat("Directorio de salida: ", getwd(), "\n")
 
-for (indice_semillerio in 1:length(PARAM$archivos)) {
+for (indice_semillerio in seq_along(PARAM$archivos)) {
 
     # cols: numero_de_cliente,foto_mes,prob,rank
-    tb_prediccion_semillerio <- fread(PARAM$archivos[1])
+    tb_prediccion_semillerio <- fread(PARAM$archivos[indice_semillerio])
     #setorder(tb_prediccion, numero_de_cliente)
 
     if(!exists("tb_hibridador")) {
