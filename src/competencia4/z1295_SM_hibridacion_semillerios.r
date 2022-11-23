@@ -9,6 +9,7 @@ PARAM <- list()
 PARAM$experimento <- "ZZ1292_hibridacion_semillerio_kaggle_m1"
 
 # Se listan INDIVIDUALMENTE los semillerios que se desean incluir
+# Estos archivos los genera el z1292 cuando tiene PARAM$generar_salida_hibridador <- TRUE
 PARAM$archivos <- c(
     "../ZZ1292_semillerio_kaggle_m1/ZZ1292_semillerio_kaggle_m1_rank_predicciones.csv",
     "../ZZ1292_semillerio_kaggle_m2/ZZ1292_semillerio_kaggle_m2_rank_predicciones.csv"
