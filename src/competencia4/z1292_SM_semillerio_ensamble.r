@@ -13,6 +13,9 @@ PARAM$exp_input <- "ZZ9410_semillerio_ensamble_m1"
 # Es posible que no se desee activar porque va a crear muchos csv que posiblemente no se utilicen
 PARAM$generar_salidas_individuales <- TRUE
 
+# Genera un archivo que será usado por z1295 si se quiere hibridar los semillerios.
+PARAM$generar_salida_hibridador <- TRUE
+
 # Decide si para finalizar la predicción usa el ranking o se queda con las probabilidades
 PARAM$use_rank_final <- TRUE
 
@@ -52,6 +55,9 @@ rm(dataset)
 
 # Tabla que contendrá los rankings de todos los clientes para todas las semillas
 tb_ranking_semillerio <- data.table(numero_de_cliente = dataset_septiembre[, numero_de_cliente])
+
+cat("Semillas involucradas en el semillerio: ", length(archivos), "\n")
+cat("Directorio de salida: ", getwd(), "\n")
 
 for (archivo in archivos) {
 
@@ -124,3 +130,20 @@ fwrite(
     file = nombre_arch_ensamble,
     sep = ","
 )
+
+if (PARAM$generar_salida_hibridador) {
+    setorder(tb_prediccion_semillerio, numero_de_cliente)
+    nombre_arch_hibridador <- paste0(
+        PARAM$experimento,
+        "_",
+        ifelse(PARAM$use_rank_final, "rank", "proba"),
+        "_",
+        "predicciones",
+        ".csv"
+    )
+    fwrite(
+        tb_prediccion_semillerio[, list(numero_de_cliente, prediccion)],
+        file = nombre_arch_hibridador,
+        sep = ","
+    )
+}
