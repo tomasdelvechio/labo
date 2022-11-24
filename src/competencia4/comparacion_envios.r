@@ -15,9 +15,9 @@ PARAM <- list()
 # Estos archivos los genera el z1292 cuando tiene PARAM$generar_salida_hibridador <- TRUE
 #PARAM$archivo_uno <- "../ZZ1292_hibridacion_semillerio_kaggle_m1/ZZ1292_hibridacion_semillerio_kaggle_m1_hibridacion_C10250.csv"
 PARAM$archivo_uno <- "../ZZ1292_semillerio_kaggle_m1/ZZ1292_semillerio_kaggle_m1_ensamble_rank_C10250.csv"
-#PARAM$archivo_dos <- "../ZZ1292_semillerio_kaggle_m1/ZZ1292_semillerio_kaggle_m1_ensamble_rank_C10250.csv"
+PARAM$archivo_dos <- "../ZZ1292_semillerio_kaggle_m1/ZZ1292_semillerio_kaggle_m1_ensamble_rank_C10250_72s.csv"
 #PARAM$archivo_dos <- "../ZZ1292_semillerio_kaggle_m3/ZZ1292_semillerio_kaggle_m3_ensamble_rank_C10250.csv"
-PARAM$archivo_dos <- "../ZZ1292_semillerio_kaggle_m2/ZZ1292_semillerio_kaggle_m2_ensamble_rank_C10250.csv"
+#PARAM$archivo_dos <- "../ZZ1297_stacking_semillerio_kaggle/ZZ1297_stacking_semillerio_kaggle_stacking_C10123.csv"
 
 # FIN Parametros del script
 
