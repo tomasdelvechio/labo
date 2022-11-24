@@ -20,7 +20,7 @@ PARAM$generar_salida_hibridador <- TRUE
 PARAM$use_rank_final <- TRUE
 
 # cantidad de envios
-PARAM$corte <- 11000
+PARAM$corte <- 10250
 # FIN Parametros del script
 
 options(error = function() {
